@@ -105,6 +105,14 @@ public class TelopDrive extends OpMode{
         left = -gamepad1.left_stick_y;
         right = -gamepad1.right_stick_y;
         middle = -gamepad2.left_stick_y;
+        if (Math.abs(middle)<0.1 ) {
+            if (gamepad1.y)
+                robot.armMotor.setPower(robot.ARM_UP_POWER);
+            else if (gamepad1.a)
+                robot.armMotor.setPower(robot.ARM_DOWN_POWER);
+            else
+                robot.armMotor.setPower(0.0);
+        }
         robot.leftMotor.setPower(left);
         robot.rightMotor.setPower(right);
         robot.armMotor.setPower(middle);
@@ -120,13 +128,6 @@ public class TelopDrive extends OpMode{
 
 
         // Use gamepad buttons to move the arm up (Y) and down (A)
-/*        if (gamepad1.y)
-            robot.armMotor.setPower(robot.ARM_UP_POWER);
-        else if (gamepad1.a)
-            robot.armMotor.setPower(robot.ARM_DOWN_POWER);
-        else
-            robot.armMotor.setPower(0.0);
-*/
 
 
         // Send telemetry message to signify robot running;
