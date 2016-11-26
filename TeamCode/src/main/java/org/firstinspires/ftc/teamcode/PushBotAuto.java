@@ -94,9 +94,6 @@ public class PushBotAuto extends PushBotAutomation {
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
 
-        // hsvValues is an array that will hold the hue, saturation, and value information.
-        final float hsvValues[] = {0F,0F,0F};
-
         // get a reference to the RelativeLayout so we can change the background
         // color of the Robot Controller app to match the hue detected by the RGB sensor.
         final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(com.qualcomm.ftcrobotcontroller.R.id.RelativeLayout);
