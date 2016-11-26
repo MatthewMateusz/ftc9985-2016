@@ -57,11 +57,13 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 public class TelopDrive extends OpMode{
 
     /* Declare OpMode members. */
-    MattSetupPushbot robot       = new MattSetupPushbot(); // use the class created to define a Pushbot's hardware could also use HardwarePushbotMatrix class.
+    private MattSetupPushbot robot              = new MattSetupPushbot();   // Use Pushbot's actuators
+    // use the class above that was created to define a Pushbot's hardware
+//  private double              clawOffset      = 0.0 ;                     // Servo mid position
 
-//    double          clawOffset  = 0.0 ;                  // Servo mid position
-//    final double    CLAW_SPEED  = 0.02 ;                 // sets rate to move servo
-
+//  private staticfinal double  CLAW_SPEED      = 0.02 ;                    // sets rate to move servo
+    private static final double ARM_UP_POWER    =  0.45 ;                   //
+    private static final double ARM_DOWN_POWER  = -0.45 ;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -103,9 +105,9 @@ public class TelopDrive extends OpMode{
         // Use gamepad buttons to move the arm up (Y) and down (A)
         if (Math.abs(middle)<0.1 ) {
             if (gamepad1.y)
-                middle = robot.ARM_UP_POWER;
+                middle = ARM_UP_POWER;
             else if (gamepad1.a)
-                middle = robot.ARM_DOWN_POWER;
+                middle = ARM_DOWN_POWER;
             else
                 robot.armMotor.setPower(0.0);
         }

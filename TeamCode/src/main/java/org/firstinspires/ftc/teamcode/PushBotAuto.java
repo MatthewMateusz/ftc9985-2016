@@ -60,37 +60,35 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="Pushbot: Auto Drive By Timeouts", group="Pushbot")
-@Disabled
-public class PushBotAuto extends LinearOpMode {
-
+public class PushBotAuto extends PushBotAutomation {
 
 
     /* Declare OpMode members. */
-    MattSetupPushbot robot   = new MattSetupPushbot();   // Use a Pushbot's hardware
-    MattSetupSensors sensors = new MattSetupSensors();
-    private ElapsedTime     runtime = new ElapsedTime();
+    // robot and sensors are declared in the super of this class - PushBotAutomation
+    // and must be initialized by running setupHardware()
 
+    // use the classes above that was created to define a Pushbot's hardware
 
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
-    static final double     ARM_SPEED               = 0.1;
-    static final double     WHITE_THRESHOLD = 0.2;  // spans between 0.1 - 0.5 from dark to light
-    static final double     APPROACH_SPEED  = 0.5;
+    private static final double     DRIVE_SPEED             = 0.6;
+    private static final double     APPROACH_SPEED          = 0.5;
+    private static final double     TURN_SPEED              = 0.5;
+    private static final double     ARM_SPEED               = 0.1;
+    private static final double     FAR_AWAY                = 99.0;
+    private static final double     RIGHT_ANGLE             = 90.0;
+    private static final double     WHITE_THRESHOLD         = 0.2;  // spans between 0.1 - 0.5 from dark to light
+
+    private static final double     SHORT_TIMEOUT           = 1;
+    private static final double     MEDIUM_TIMEOUT          = 3;
+    private static final double     LONG_TIMEOUT            = 10;
 
     @Override
     public void runOpMode() {
-
         /*
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
-        telemetry.addData("Status", "Init Mat hardware in automode");    //
-        telemetry.update();
-        telemetry.addData("Status", "Init Mat actuators");    //
-        robot.init(hardwareMap);
-        telemetry.addData("Status", "Init Mat sensors");    //
-        sensors.init(hardwareMap);
-        telemetry.addData("Status", "Init Mat complete");    //
+        telemetry.addData("Status", "Init the automode");    //
+        setupHardware();
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
@@ -114,202 +112,63 @@ public class PushBotAuto extends LinearOpMode {
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
 
-        robot.leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        idle();
-
-        robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        resetEncoders();
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d",
-                          robot.leftMotor.getCurrentPosition(),
-                          robot.rightMotor.getCurrentPosition());
-        telemetry.update();
+        telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition()); telemetry.update();
 
+        // Display the light level while we are waiting to start
         while (!isStarted())
         {
-            // Display the light level while we are waiting to start
-            telemetry.addData("Light Level", sensors.lightSensor.getLightDetected());
-            telemetry.update();
+            telemetry.addData("Light Level", sensors.lightSensor.getLightDetected()); telemetry.update();
             idle();
         }
 
-        telemetry.addData(">", "Robot Ready.");    //
-        telemetry.update();
-
+        telemetry.addData(">", "Robot Ready."); telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        encoderDrive(DRIVE_SPEED , 1 , 1 , 1);
-        encoderDrive(TURN_SPEED , 6 , -6 , 5);
+        driveDistance(DRIVE_SPEED , 12,      SHORT_TIMEOUT);
+        turnInPlace(TURN_SPEED, RIGHT_ANGLE, MEDIUM_TIMEOUT);
 
-        robot.leftMotor.setPower(1);
-        robot.rightMotor.setPower(1);
-        while (opModeIsActive() && sensors.touchSensorFront.isPressed()== false)
-        {
-            idle();
-        }
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
-
-        encoderDrive(DRIVE_SPEED , -1 , -1 , 5);
-        encoderDrive(TURN_SPEED , -6 , 6 , 5);
-
-        robot.leftMotor.setPower(APPROACH_SPEED);
-        robot.rightMotor.setPower(APPROACH_SPEED);
-
-        while (opModeIsActive() && (sensors.lightSensor.getLightDetected() < WHITE_THRESHOLD))
-        {
-            // Display the light level while we are looking for the line
-            telemetry.addData("Light Level",  sensors.lightSensor.getLightDetected());
-            telemetry.update();
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+        if (true) {
+            telemetry.addData("Path", "Testing - early termination"); telemetry.update();
+            return; // early dismissal when testing
         }
 
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
+        driveDistance(DRIVE_SPEED, 1, LONG_TIMEOUT);
+        driveToBumper(APPROACH_SPEED, FAR_AWAY,  MEDIUM_TIMEOUT);
+        driveDistance(APPROACH_SPEED , -1.0, MEDIUM_TIMEOUT);
+        turnInPlace(TURN_SPEED, -RIGHT_ANGLE, 5);
+
+        driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, FAR_AWAY, MEDIUM_TIMEOUT);
 
         if (sensors.colorSensor.blue() > sensors.colorSensor.red())
         {
-            while (opModeIsActive() && sensors.touchSensorFront.isPressed()== false)
-            {
-                robot.armMotor.setPower(-ARM_SPEED);
-            }
-            robot.armMotor.setPower(0);
+            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
         }
         else
         {
-            encoderDrive(APPROACH_SPEED , 1, 1 ,1);
-            while (opModeIsActive() && sensors.touchSensorArm.isPressed()== false)
-            {
-                robot.armMotor.setPower(-ARM_SPEED);
-            }
-            robot.armMotor.setPower(0);
+            driveDistance(APPROACH_SPEED, 1, MEDIUM_TIMEOUT);
+            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
         }
 
-        encoderDrive(DRIVE_SPEED , 1 , 1 , 1);
+        driveDistance(DRIVE_SPEED, 1, MEDIUM_TIMEOUT);
 
-        robot.leftMotor.setPower(APPROACH_SPEED);
-        robot.rightMotor.setPower(APPROACH_SPEED);
-
-        while (opModeIsActive() && (sensors.lightSensor.getLightDetected() < WHITE_THRESHOLD))
-        {
-            // Display the light level while we are looking for the line
-            telemetry.addData("Light Level",  sensors.lightSensor.getLightDetected());
-            telemetry.update();
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
-        }
-
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
+        driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, 99, MEDIUM_TIMEOUT);
 
         if (sensors.colorSensor.blue() > sensors.colorSensor.red())
         {
-            while (opModeIsActive() && sensors.touchSensorFront.isPressed()== false)
-            {
-                robot.armMotor.setPower(-ARM_SPEED);
-            }
-            robot.armMotor.setPower(0);
+            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
         }
         else
         {
-            encoderDrive(APPROACH_SPEED , 1, 1 ,1);
-            while (opModeIsActive() && sensors.touchSensorArm.isPressed()== false)
-            {
-                robot.armMotor.setPower(-ARM_SPEED);
-            }
-            robot.armMotor.setPower(0);
+            driveDistance(APPROACH_SPEED, 1, MEDIUM_TIMEOUT);
+            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
         }
 
-
-
-
-
-
-
-        sleep(1000);     // pause for servos to move
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-    }
-
-
-    public void driveDistance(double speed, double distance) {
-
-    }
-
-    public void driveToBumper(double speed, double maxdistance) {
-
-    }
-
-    public void driveToColor(double speed, double maxdistance) {
-
-    }
-
-    public void turnDegrees(double speed, double degrees) {
-
-    }
-
-
-
-
-    /*
-     *  Method to perfmorm a relative move, based on encoder counts.
-     *  Encoders are not reset as the move is based on the current position.
-     *  Move will stop if any of three conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Move runs out of time
-     *  3) Driver stops the opmode running.
-     */
-    public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
-
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            newLeftTarget = robot.leftMotor.getCurrentPosition() + (int)(leftInches * robot.COUNTS_PER_INCH);
-            newRightTarget = robot.rightMotor.getCurrentPosition() + (int) (rightInches * robot.COUNTS_PER_INCH);
-            robot.leftMotor.setTargetPosition(newLeftTarget);
-            robot.rightMotor.setTargetPosition(newRightTarget);
-
-            // Turn On RUN_TO_POSITION
-            robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            robot.leftMotor.setPower(Math.abs(speed));
-            robot.rightMotor.setPower(Math.abs(speed));
-
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                   (robot.leftMotor.isBusy() && robot.rightMotor.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Path2",  "Running at %7d :%7d",
-                                            robot.leftMotor.getCurrentPosition(),
-                                            robot.rightMotor.getCurrentPosition());
-                telemetry.update();
-            }
-
-            // Stop all motion;
-            robot.leftMotor.setPower(0);
-            robot.rightMotor.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //  sleep(250);   // optional pause after each move
-        }
+        sleep(1000);  // pause just in case
+        telemetry.addData("Path", "Complete"); telemetry.update();
     }
 
 
