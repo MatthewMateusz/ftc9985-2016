@@ -38,7 +38,7 @@ public class MattSetupPushbot
     public static final double WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     public static final double COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
 
-    /* local OpMode members. */
+    /* local members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
 
