@@ -35,17 +35,11 @@ package org.firstinspires.ftc.teamcode;
 import android.app.Activity;
 import android.view.View;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsDigitalTouchSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-//import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-//import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -79,30 +73,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class PushBotAuto extends LinearOpMode {
 
 
-    /* Touch Sensor */
-    ModernRoboticsDigitalTouchSensor touchSensor = null;
-    ModernRoboticsDigitalTouchSensor touchSensorArm = null;
-
 
     /* Declare OpMode members. */
     MattSetupPushbot robot   = new MattSetupPushbot();   // Use a Pushbot's hardware
+    MattSetupSensors sensors = new MattSetupSensors();
     private ElapsedTime     runtime = new ElapsedTime();
 
-    //ODS *Addon
-    OpticalDistanceSensor lightSensor;
 
-    //MRColor Sensor *Addon
-    ColorSensor colorSensor;
-
-
-
-
-
-    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 2 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
     static final double     ARM_SPEED               = 0.1;
@@ -118,19 +95,15 @@ public class PushBotAuto extends LinearOpMode {
          */
         telemetry.addData("Status", "Init Mat hardware in automode");    //
         telemetry.update();
+        telemetry.addData("Status", "Init Mat actuators");    //
         robot.init(hardwareMap);
+        telemetry.addData("Status", "Init Mat sensors");    //
+        sensors.init(hardwareMap);
+        telemetry.addData("Status", "Init Mat complete");    //
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
-
-        //Define touchSensor
-        touchSensor = (ModernRoboticsDigitalTouchSensor) hardwareMap.touchSensor.get("touchSensor");
-        touchSensorArm = (ModernRoboticsDigitalTouchSensor) hardwareMap.touchSensor.get("touchSensorArm");
-
-        //Define lightSensor & enbale led
-        lightSensor = hardwareMap.opticalDistanceSensor.get("lightSensor");
-        lightSensor.enableLed(true);
 
         // hsvValues is an array that will hold the hue, saturation, and value information.
         float hsvValues[] = {0F,0F,0F};
@@ -150,10 +123,10 @@ public class PushBotAuto extends LinearOpMode {
         boolean bLedOn = true;
 
         // get a reference to our ColorSensor object.
-        colorSensor = hardwareMap.colorSensor.get("colorSensor");
+        sensors.colorSensor = hardwareMap.colorSensor.get("colorSensor");
 
         // Set the LED in the beginning
-        colorSensor.enableLed(bLedOn);
+        sensors.colorSensor.enableLed(bLedOn);
 
 
 
@@ -178,7 +151,7 @@ public class PushBotAuto extends LinearOpMode {
         while (!isStarted())
         {
             // Display the light level while we are waiting to start
-            telemetry.addData("Light Level", lightSensor.getLightDetected());
+            telemetry.addData("Light Level", sensors.lightSensor.getLightDetected());
             telemetry.update();
             idle();
         }
@@ -191,11 +164,11 @@ public class PushBotAuto extends LinearOpMode {
         waitForStart();
 
         encoderDrive(DRIVE_SPEED , 1 , 1 , 1);
-      /*  encoderDrive(TURN_SPEED , 6 , -6 , 5);
+        encoderDrive(TURN_SPEED , 6 , -6 , 5);
 
         robot.leftMotor.setPower(1);
         robot.rightMotor.setPower(1);
-        while (opModeIsActive() && touchSensor.isPressed()== false)
+        while (opModeIsActive() && sensors.touchSensorFront.isPressed()== false)
         {
             idle();
         }
@@ -208,10 +181,10 @@ public class PushBotAuto extends LinearOpMode {
         robot.leftMotor.setPower(APPROACH_SPEED);
         robot.rightMotor.setPower(APPROACH_SPEED);
 
-        while (opModeIsActive() && (lightSensor.getLightDetected() < WHITE_THRESHOLD))
+        while (opModeIsActive() && (sensors.lightSensor.getLightDetected() < WHITE_THRESHOLD))
         {
             // Display the light level while we are looking for the line
-            telemetry.addData("Light Level",  lightSensor.getLightDetected());
+            telemetry.addData("Light Level",  sensors.lightSensor.getLightDetected());
             telemetry.update();
             idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
@@ -219,9 +192,9 @@ public class PushBotAuto extends LinearOpMode {
         robot.leftMotor.setPower(0);
         robot.rightMotor.setPower(0);
 
-        if (colorSensor.blue() > colorSensor.red())
+        if (sensors.colorSensor.blue() > sensors.colorSensor.red())
         {
-            while (opModeIsActive() && touchSensor.isPressed()== false)
+            while (opModeIsActive() && sensors.touchSensorFront.isPressed()== false)
             {
                 robot.armMotor.setPower(-ARM_SPEED);
             }
@@ -230,7 +203,7 @@ public class PushBotAuto extends LinearOpMode {
         else
         {
             encoderDrive(APPROACH_SPEED , 1, 1 ,1);
-            while (opModeIsActive() && touchSensorArm.isPressed()== false)
+            while (opModeIsActive() && sensors.touchSensorArm.isPressed()== false)
             {
                 robot.armMotor.setPower(-ARM_SPEED);
             }
@@ -242,10 +215,10 @@ public class PushBotAuto extends LinearOpMode {
         robot.leftMotor.setPower(APPROACH_SPEED);
         robot.rightMotor.setPower(APPROACH_SPEED);
 
-        while (opModeIsActive() && (lightSensor.getLightDetected() < WHITE_THRESHOLD))
+        while (opModeIsActive() && (sensors.lightSensor.getLightDetected() < WHITE_THRESHOLD))
         {
             // Display the light level while we are looking for the line
-            telemetry.addData("Light Level",  lightSensor.getLightDetected());
+            telemetry.addData("Light Level",  sensors.lightSensor.getLightDetected());
             telemetry.update();
             idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
@@ -253,9 +226,9 @@ public class PushBotAuto extends LinearOpMode {
         robot.leftMotor.setPower(0);
         robot.rightMotor.setPower(0);
 
-        if (colorSensor.blue() > colorSensor.red())
+        if (sensors.colorSensor.blue() > sensors.colorSensor.red())
         {
-            while (opModeIsActive() && touchSensor.isPressed()== false)
+            while (opModeIsActive() && sensors.touchSensorFront.isPressed()== false)
             {
                 robot.armMotor.setPower(-ARM_SPEED);
             }
@@ -264,15 +237,12 @@ public class PushBotAuto extends LinearOpMode {
         else
         {
             encoderDrive(APPROACH_SPEED , 1, 1 ,1);
-            while (opModeIsActive() && touchSensorArm.isPressed()== false)
+            while (opModeIsActive() && sensors.touchSensorArm.isPressed()== false)
             {
                 robot.armMotor.setPower(-ARM_SPEED);
             }
             robot.armMotor.setPower(0);
         }
-
-
-*/
 
 
 
@@ -285,6 +255,26 @@ public class PushBotAuto extends LinearOpMode {
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
+
+
+    public void driveDistance(double speed, double distance) {
+
+    }
+
+    public void driveToBumper(double speed, double maxdistance) {
+
+    }
+
+    public void driveToColor(double speed, double maxdistance) {
+
+    }
+
+    public void turnDegrees(double speed, double degrees) {
+
+    }
+
+
+
 
     /*
      *  Method to perfmorm a relative move, based on encoder counts.
@@ -304,8 +294,8 @@ public class PushBotAuto extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = robot.leftMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = robot.rightMotor.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
+            newLeftTarget = robot.leftMotor.getCurrentPosition() + (int)(leftInches * robot.COUNTS_PER_INCH);
+            newRightTarget = robot.rightMotor.getCurrentPosition() + (int) (rightInches * robot.COUNTS_PER_INCH);
             robot.leftMotor.setTargetPosition(newLeftTarget);
             robot.rightMotor.setTargetPosition(newRightTarget);
 
@@ -342,4 +332,6 @@ public class PushBotAuto extends LinearOpMode {
             //  sleep(250);   // optional pause after each move
         }
     }
+
+
 }

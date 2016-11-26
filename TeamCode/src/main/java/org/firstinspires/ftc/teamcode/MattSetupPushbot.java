@@ -24,7 +24,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 public class MattSetupPushbot
 {
-    /* Public OpMode members. */
+    /* Public actuator members. */
     public DcMotor  leftMotor   = null;
     public DcMotor  rightMotor  = null;
     public DcMotor  armMotor    = null;
@@ -32,6 +32,11 @@ public class MattSetupPushbot
 
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = -0.45 ;
+
+    public static final double COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
+    public static final double DRIVE_GEAR_REDUCTION    = 2 ;     // This is < 1.0 if geared UP
+    public static final double WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    public static final double COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -91,6 +96,11 @@ public class MattSetupPushbot
             }
         }
 
+        // Reset the cycle clock for the next pass.
+        period.reset();
+    }
+
+    public void startTicking() {
         // Reset the cycle clock for the next pass.
         period.reset();
     }
