@@ -125,7 +125,7 @@ public class PushBotAuto extends PushBotAutomation {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveDistance(DRIVE_SPEED , 12,      SHORT_TIMEOUT);
+        driveDistance(DRIVE_SPEED , 12.0,      SHORT_TIMEOUT);
         turnInPlace(TURN_SPEED, RIGHT_ANGLE, MEDIUM_TIMEOUT);
 
         if (true) {
@@ -164,7 +164,7 @@ public class PushBotAuto extends PushBotAutomation {
             pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
         }
 
-        sleep(1000);  // pause just in case
+        // sleep(1000);  // pause is needed only in case the last command pertained to servo motors
         telemetry.addData("Path", "Complete"); telemetry.update();
     }
 
