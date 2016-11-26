@@ -53,7 +53,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
 
     public void driveDistance(double speed, double inches, double timeoutS) {
         telemetry.addData("Status", "driveDistance");  telemetry.update();
-        encoderDrive(speed, inches, -inches, timeoutS);
+        encoderDrive(speed, inches, inches, timeoutS);
     }
 
     public void driveToBumper(double speed, double maxdistance, double timeoutS) {
