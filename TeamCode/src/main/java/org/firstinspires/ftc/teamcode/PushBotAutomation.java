@@ -21,16 +21,17 @@ abstract public class PushBotAutomation extends LinearOpMode {
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
-        telemetry.addData("Status", "Init PushBotAutomation");    //
+        telemetry.addData("Status", "Init Auto One");    //
         telemetry.update();
-        telemetry.addData("Status", "Init Mat actuators");    //
+        telemetry.addData("Status", "Init Mat Actuators");    //
         robot.init(hardwareMap);
-        telemetry.addData("Status", "Init Mat sensors");    //
+        telemetry.addData("Status", "Init Mat Sensors");    //
         sensors.init(hardwareMap);
-        telemetry.addData("Status", "Init complete");    //
+        telemetry.addData("Status", "Init Complete");    //
     }
 
     public void resetEncoders() {
+        telemetry.addData("Status", "resetEncoders");  telemetry.update();
         robot.leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         idle();
