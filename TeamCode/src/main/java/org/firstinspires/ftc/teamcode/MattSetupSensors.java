@@ -23,7 +23,7 @@ public class MattSetupSensors {
     ColorSensor colorSensor;
 
     /* local members. */
-    HardwareMap hardwareMap =  null;
+    HardwareMap hwMap =  null;
 
 
     /* Constructor */
@@ -33,16 +33,19 @@ public class MattSetupSensors {
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
-        hardwareMap = ahwMap;
+        hwMap = ahwMap;
 
         //Define touchSensorFront
-        touchSensorFront = (ModernRoboticsDigitalTouchSensor) hardwareMap.touchSensor.get("touchSensorFront");
-        touchSensorArm   = (ModernRoboticsDigitalTouchSensor) hardwareMap.touchSensor.get("touchSensorArm");
+        touchSensorFront = (ModernRoboticsDigitalTouchSensor) hwMap.touchSensor.get("touchSensorFront");
+        touchSensorArm   = (ModernRoboticsDigitalTouchSensor) hwMap.touchSensor.get("touchSensorArm");
 
         //Define lightSensor & enbale led
-        lightSensor = hardwareMap.opticalDistanceSensor.get("lightSensor");
+        lightSensor = hwMap.opticalDistanceSensor.get("lightSensor");
         lightSensor.enableLed(true);
 
+        // Define ColorSensor & enbale led
+        colorSensor = hwMap.colorSensor.get("colorSensor");
+        colorSensor.enableLed(true);
     }
 
 

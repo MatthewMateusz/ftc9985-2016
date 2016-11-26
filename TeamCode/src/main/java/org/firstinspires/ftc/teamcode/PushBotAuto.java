@@ -49,15 +49,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * The code REQUIRES that you DO have encoders on the wheels,
  *   otherwise you would use: PushbotAutoDriveByTime;
  *
- *  This code ALSO requires that the drive Motors have been configured such that a positive
- *  power command moves them forwards, and causes the encoders to count UP.
- *
- *   The desired path in this example is:
- *   - Drive forward for 48 inches
- *   - Spin right for 12 Inches
- *   - Drive Backwards for 24 inches
- *   - Stop and close the claw.
- *
  *  The code is written using a method called: encoderDrive(speed, leftInches, rightInches, timeoutS)
  *  that performs the actual movement.
  *  This methods assumes that each movement is relative to the last stopping place.
@@ -106,10 +97,7 @@ public class PushBotAuto extends LinearOpMode {
         telemetry.update();
 
         // hsvValues is an array that will hold the hue, saturation, and value information.
-        float hsvValues[] = {0F,0F,0F};
-
-        // values is a reference to the hsvValues array.
-        final float values[] = hsvValues;
+        final float hsvValues[] = {0F,0F,0F};
 
         // get a reference to the RelativeLayout so we can change the background
         // color of the Robot Controller app to match the hue detected by the RGB sensor.
@@ -118,15 +106,6 @@ public class PushBotAuto extends LinearOpMode {
         // bPrevState and bCurrState represent the previous and current state of the button.
         boolean bPrevState = false;
         boolean bCurrState = false;
-
-        // bLedOn represents the state of the LED.
-        boolean bLedOn = true;
-
-        // get a reference to our ColorSensor object.
-        sensors.colorSensor = hardwareMap.colorSensor.get("colorSensor");
-
-        // Set the LED in the beginning
-        sensors.colorSensor.enableLed(bLedOn);
 
 
 
