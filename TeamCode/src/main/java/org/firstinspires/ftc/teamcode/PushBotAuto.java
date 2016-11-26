@@ -35,17 +35,11 @@ package org.firstinspires.ftc.teamcode;
 import android.app.Activity;
 import android.view.View;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsDigitalTouchSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-//import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-//import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -54,15 +48,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *
  * The code REQUIRES that you DO have encoders on the wheels,
  *   otherwise you would use: PushbotAutoDriveByTime;
- *
- *  This code ALSO requires that the drive Motors have been configured such that a positive
- *  power command moves them forwards, and causes the encoders to count UP.
- *
- *   The desired path in this example is:
- *   - Drive forward for 48 inches
- *   - Spin right for 12 Inches
- *   - Drive Backwards for 24 inches
- *   - Stop and close the claw.
  *
  *  The code is written using a method called: encoderDrive(speed, leftInches, rightInches, timeoutS)
  *  that performs the actual movement.
@@ -74,69 +59,40 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Pushbot: Auto Drive By Timeouts", group="Pushbot")
-@Disabled
-public class PushBotAuto extends LinearOpMode {
-
-
-    /* Touch Sensor */
-    ModernRoboticsDigitalTouchSensor touchSensor = null;
-    ModernRoboticsDigitalTouchSensor touchSensorArm = null;
+@Autonomous(name="Autonomous One", group="Auto")
+public class PushBotAuto extends PushBotAutomation {
 
 
     /* Declare OpMode members. */
-    MattSetupPushbot robot   = new MattSetupPushbot();   // Use a Pushbot's hardware
-    private ElapsedTime     runtime = new ElapsedTime();
+    // robot and sensors are declared in the super of this class - PushBotAutomation
+    // and must be initialized by running setupHardware()
 
-    //ODS *Addon
-    OpticalDistanceSensor lightSensor;
+    // use the classes above that was created to define a Pushbot's hardware
 
-    //MRColor Sensor *Addon
-    ColorSensor colorSensor;
+    private static final double     DRIVE_SPEED             = 0.6;
+    private static final double     APPROACH_SPEED          = 0.5;
+    private static final double     TURN_SPEED              = 0.5;
+    private static final double     ARM_SPEED               = 0.1;
+    private static final double     FAR_AWAY                = 99.0;
+    private static final double     RIGHT_ANGLE             = 90.0;
+    private static final double     WHITE_THRESHOLD         = 0.2;  // spans between 0.1 - 0.5 from dark to light
 
-
-
-
-
-    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 2 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
-    static final double     ARM_SPEED               = 0.1;
-    static final double     WHITE_THRESHOLD = 0.2;  // spans between 0.1 - 0.5 from dark to light
-    static final double     APPROACH_SPEED  = 0.5;
+    private static final double     SHORT_TIMEOUT           = 1;
+    private static final double     MEDIUM_TIMEOUT          = 3;
+    private static final double     LONG_TIMEOUT            = 10;
 
     @Override
     public void runOpMode() {
-
         /*
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
-        telemetry.addData("Status", "Init Mat hardware in automode");    //
-        telemetry.update();
-        robot.init(hardwareMap);
+        telemetry.addData("Status", "Init the automode");    //
+        setupHardware();
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
-
-        //Define touchSensor
-        touchSensor = (ModernRoboticsDigitalTouchSensor) hardwareMap.touchSensor.get("touchSensor");
-        touchSensorArm = (ModernRoboticsDigitalTouchSensor) hardwareMap.touchSensor.get("touchSensorArm");
-
-        //Define lightSensor & enbale led
-        lightSensor = hardwareMap.opticalDistanceSensor.get("lightSensor");
-        lightSensor.enableLed(true);
-
-        // hsvValues is an array that will hold the hue, saturation, and value information.
-        float hsvValues[] = {0F,0F,0F};
-
-        // values is a reference to the hsvValues array.
-        final float values[] = hsvValues;
 
         // get a reference to the RelativeLayout so we can change the background
         // color of the Robot Controller app to match the hue detected by the RGB sensor.
@@ -146,15 +102,6 @@ public class PushBotAuto extends LinearOpMode {
         boolean bPrevState = false;
         boolean bCurrState = false;
 
-        // bLedOn represents the state of the LED.
-        boolean bLedOn = true;
-
-        // get a reference to our ColorSensor object.
-        colorSensor = hardwareMap.colorSensor.get("colorSensor");
-
-        // Set the LED in the beginning
-        colorSensor.enableLed(bLedOn);
-
 
 
 
@@ -162,184 +109,64 @@ public class PushBotAuto extends LinearOpMode {
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
 
-        robot.leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        idle();
-
-        robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        resetEncoders();
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d",
-                          robot.leftMotor.getCurrentPosition(),
-                          robot.rightMotor.getCurrentPosition());
-        telemetry.update();
+        telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition()); telemetry.update();
 
+        // Display the light level while we are waiting to start
         while (!isStarted())
         {
-            // Display the light level while we are waiting to start
-            telemetry.addData("Light Level", lightSensor.getLightDetected());
-            telemetry.update();
+            telemetry.addData("Light Level", sensors.lightSensor.getLightDetected()); telemetry.update();
             idle();
         }
 
-        telemetry.addData(">", "Robot Ready.");    //
-        telemetry.update();
-
+        telemetry.addData(">", "Robot Ready."); telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        encoderDrive(DRIVE_SPEED , 1 , 1 , 1);
-      /*  encoderDrive(TURN_SPEED , 6 , -6 , 5);
+        driveDistance(DRIVE_SPEED , 12,      SHORT_TIMEOUT);
+        turnInPlace(TURN_SPEED, RIGHT_ANGLE, MEDIUM_TIMEOUT);
 
-        robot.leftMotor.setPower(1);
-        robot.rightMotor.setPower(1);
-        while (opModeIsActive() && touchSensor.isPressed()== false)
-        {
-            idle();
-        }
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
-
-        encoderDrive(DRIVE_SPEED , -1 , -1 , 5);
-        encoderDrive(TURN_SPEED , -6 , 6 , 5);
-
-        robot.leftMotor.setPower(APPROACH_SPEED);
-        robot.rightMotor.setPower(APPROACH_SPEED);
-
-        while (opModeIsActive() && (lightSensor.getLightDetected() < WHITE_THRESHOLD))
-        {
-            // Display the light level while we are looking for the line
-            telemetry.addData("Light Level",  lightSensor.getLightDetected());
-            telemetry.update();
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+        if (true) {
+            telemetry.addData("Path", "Testing - early termination"); telemetry.update();
+            return; // early dismissal when testing
         }
 
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
+        driveDistance(DRIVE_SPEED, 1, LONG_TIMEOUT);
+        driveToBumper(APPROACH_SPEED, FAR_AWAY,  MEDIUM_TIMEOUT);
+        driveDistance(APPROACH_SPEED , -1.0, MEDIUM_TIMEOUT);
+        turnInPlace(TURN_SPEED, -RIGHT_ANGLE, 5);
 
-        if (colorSensor.blue() > colorSensor.red())
+        driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, FAR_AWAY, MEDIUM_TIMEOUT);
+
+        if (sensors.colorSensor.blue() > sensors.colorSensor.red())
         {
-            while (opModeIsActive() && touchSensor.isPressed()== false)
-            {
-                robot.armMotor.setPower(-ARM_SPEED);
-            }
-            robot.armMotor.setPower(0);
+            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
         }
         else
         {
-            encoderDrive(APPROACH_SPEED , 1, 1 ,1);
-            while (opModeIsActive() && touchSensorArm.isPressed()== false)
-            {
-                robot.armMotor.setPower(-ARM_SPEED);
-            }
-            robot.armMotor.setPower(0);
+            driveDistance(APPROACH_SPEED, 1, MEDIUM_TIMEOUT);
+            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
         }
 
-        encoderDrive(DRIVE_SPEED , 1 , 1 , 1);
+        driveDistance(DRIVE_SPEED, 1, MEDIUM_TIMEOUT);
 
-        robot.leftMotor.setPower(APPROACH_SPEED);
-        robot.rightMotor.setPower(APPROACH_SPEED);
+        driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, 99, MEDIUM_TIMEOUT);
 
-        while (opModeIsActive() && (lightSensor.getLightDetected() < WHITE_THRESHOLD))
+        if (sensors.colorSensor.blue() > sensors.colorSensor.red())
         {
-            // Display the light level while we are looking for the line
-            telemetry.addData("Light Level",  lightSensor.getLightDetected());
-            telemetry.update();
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
-        }
-
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
-
-        if (colorSensor.blue() > colorSensor.red())
-        {
-            while (opModeIsActive() && touchSensor.isPressed()== false)
-            {
-                robot.armMotor.setPower(-ARM_SPEED);
-            }
-            robot.armMotor.setPower(0);
+            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
         }
         else
         {
-            encoderDrive(APPROACH_SPEED , 1, 1 ,1);
-            while (opModeIsActive() && touchSensorArm.isPressed()== false)
-            {
-                robot.armMotor.setPower(-ARM_SPEED);
-            }
-            robot.armMotor.setPower(0);
+            driveDistance(APPROACH_SPEED, 1, MEDIUM_TIMEOUT);
+            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
         }
 
-
-*/
-
-
-
-
-
-
-
-        sleep(1000);     // pause for servos to move
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
+        sleep(1000);  // pause just in case
+        telemetry.addData("Path", "Complete"); telemetry.update();
     }
 
-    /*
-     *  Method to perfmorm a relative move, based on encoder counts.
-     *  Encoders are not reset as the move is based on the current position.
-     *  Move will stop if any of three conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Move runs out of time
-     *  3) Driver stops the opmode running.
-     */
-    public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
 
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            newLeftTarget = robot.leftMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = robot.rightMotor.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
-            robot.leftMotor.setTargetPosition(newLeftTarget);
-            robot.rightMotor.setTargetPosition(newRightTarget);
-
-            // Turn On RUN_TO_POSITION
-            robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            robot.leftMotor.setPower(Math.abs(speed));
-            robot.rightMotor.setPower(Math.abs(speed));
-
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                   (robot.leftMotor.isBusy() && robot.rightMotor.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Path2",  "Running at %7d :%7d",
-                                            robot.leftMotor.getCurrentPosition(),
-                                            robot.rightMotor.getCurrentPosition());
-                telemetry.update();
-            }
-
-            // Stop all motion;
-            robot.leftMotor.setPower(0);
-            robot.rightMotor.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //  sleep(250);   // optional pause after each move
-        }
-    }
 }

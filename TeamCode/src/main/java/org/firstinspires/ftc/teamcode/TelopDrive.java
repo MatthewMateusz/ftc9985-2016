@@ -32,10 +32,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.Range;
+// import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
@@ -54,15 +53,17 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Pushbot: Teleop Tank", group="Pushbot")
+@TeleOp(name="Teleoperation", group="Teleop")
 public class TelopDrive extends OpMode{
 
     /* Declare OpMode members. */
-    MattSetupPushbot robot       = new MattSetupPushbot(); // use the class created to define a Pushbot's hardware
-                                                         // could also use HardwarePushbotMatrix class.
-    double          clawOffset  = 0.0 ;                  // Servo mid position
-    final double    CLAW_SPEED  = 0.02 ;                 // sets rate to move servo
+    private MattSetupPushbot robot              = new MattSetupPushbot();   // Use Pushbot's actuators
+    // use the class above that was created to define a Pushbot's hardware
+//  private double              clawOffset      = 0.0 ;                     // Servo mid position
 
+//  private staticfinal double  CLAW_SPEED      = 0.02 ;                    // sets rate to move servo
+    private static final double ARM_UP_POWER    =  0.45 ;                   //
+    private static final double ARM_DOWN_POWER  = -0.45 ;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -97,43 +98,36 @@ public class TelopDrive extends OpMode{
      */
     @Override
     public void loop() {
-        double left;
-        double right;
-        double middle;
-
         // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
-        left = -gamepad1.left_stick_y;
-        right = -gamepad1.right_stick_y;
-        middle = -gamepad2.left_stick_y;
+        double left   = -gamepad1.left_stick_y;
+        double right  = -gamepad1.right_stick_y;
+        double middle = -gamepad2.left_stick_y;
+        // Use gamepad buttons to move the arm up (Y) and down (A)
         if (Math.abs(middle)<0.1 ) {
             if (gamepad1.y)
-                robot.armMotor.setPower(robot.ARM_UP_POWER);
+                middle = ARM_UP_POWER;
             else if (gamepad1.a)
-                robot.armMotor.setPower(robot.ARM_DOWN_POWER);
+                middle = ARM_DOWN_POWER;
             else
                 robot.armMotor.setPower(0.0);
         }
+
         robot.leftMotor.setPower(left);
         robot.rightMotor.setPower(right);
         robot.armMotor.setPower(middle);
 
-        // Use gamepad left & right Bumpers to open and close the claw
-        if (gamepad1.right_bumper)
-            clawOffset += CLAW_SPEED;
-        else if (gamepad1.left_bumper)
-            clawOffset -= CLAW_SPEED;
 
-        // Move both servos to new position.  Assume servos are mirror image of each other.
-        clawOffset = Range.clip(clawOffset, -0.5, 0.5);
-
-
-        // Use gamepad buttons to move the arm up (Y) and down (A)
+//        // Use gamepad left & right Bumpers to open and close the claw
+//        if (gamepad1.right_bumper) clawOffset += CLAW_SPEED;
+//        else if (gamepad1.left_bumper) clawOffset -= CLAW_SPEED;
+//        clawOffset = Range.clip(clawOffset, -0.5, 0.5);
 
 
         // Send telemetry message to signify robot running;
-        telemetry.addData("claw",  "Offset = %.2f", clawOffset);
+//        telemetry.addData("claw",  "Offset = %.2f", clawOffset);
         telemetry.addData("left",  "%.2f", left);
         telemetry.addData("right", "%.2f", right);
+        telemetry.addData("arm",   "%.2f", middle);
     }
 
     /*
@@ -141,6 +135,7 @@ public class TelopDrive extends OpMode{
      */
     @Override
     public void stop() {
+        telemetry.addData("Say", "Bye Driver");    //
     }
 
 }
