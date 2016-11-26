@@ -22,9 +22,7 @@ public class MattSetupSensors {
     //MRColor Sensor *Addon
     ColorSensor colorSensor;
 
-
-
-    /* local OpMode members. */
+    /* local members. */
     HardwareMap hardwareMap =  null;
 
 
@@ -39,7 +37,7 @@ public class MattSetupSensors {
 
         //Define touchSensorFront
         touchSensorFront = (ModernRoboticsDigitalTouchSensor) hardwareMap.touchSensor.get("touchSensorFront");
-        touchSensorArm = (ModernRoboticsDigitalTouchSensor) hardwareMap.touchSensor.get("touchSensorArm");
+        touchSensorArm   = (ModernRoboticsDigitalTouchSensor) hardwareMap.touchSensor.get("touchSensorArm");
 
         //Define lightSensor & enbale led
         lightSensor = hardwareMap.opticalDistanceSensor.get("lightSensor");
