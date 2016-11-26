@@ -59,7 +59,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Pushbot: Auto Drive By Timeouts", group="Pushbot")
+@Autonomous(name="Autonomous One", group="Auto")
 public class PushBotAuto extends PushBotAutomation {
 
 

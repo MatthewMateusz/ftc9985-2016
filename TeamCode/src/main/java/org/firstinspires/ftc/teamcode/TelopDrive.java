@@ -53,7 +53,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Pushbot: Teleop Tank", group="Pushbot")
+@TeleOp(name="Teleoperation", group="Teleop")
 public class TelopDrive extends OpMode{
 
     /* Declare OpMode members. */
@@ -127,7 +127,7 @@ public class TelopDrive extends OpMode{
 //        telemetry.addData("claw",  "Offset = %.2f", clawOffset);
         telemetry.addData("left",  "%.2f", left);
         telemetry.addData("right", "%.2f", right);
-        telemetry.addData("arm", "%.2f", middle);
+        telemetry.addData("arm",   "%.2f", middle);
     }
 
     /*
