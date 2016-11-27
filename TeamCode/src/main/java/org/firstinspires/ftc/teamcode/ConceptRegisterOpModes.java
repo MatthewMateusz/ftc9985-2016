@@ -66,7 +66,7 @@ public class ConceptRegisterOpModes
     // Un-comment any line to enable that sample.
     // Or add your own lines to register your Team opmodes.
 
-    manager.register("Teleoperation" , TelopDrive.class);
+    manager.register("Teleoperation" ,   TelopDrive.class);
     manager.register("Autonomous Blue" , PushBotAutoBlue.class);
     manager.register("Autonomous Red" ,  PushBotAutoRed.class);
     manager.register("Autonomous Test" , PushBotAutoTest.class);
