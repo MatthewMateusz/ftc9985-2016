@@ -16,13 +16,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * This hardware class assumes the following device names have been configured on the robot:
  * Note:  All names are lower case and some have single spaces between words.
  *
- * Motor channel:  Left  drive motor:        "left_drive"
- * Motor channel:  Right drive motor:        "right_drive"
- * Motor channel:  Manipulator drive motor:  "left_arm"
- * Servo channel:  Servo to open left claw:  "left_hand"
- * Servo channel:  Servo to open right claw: "right_hand"
+ * Motor channel:       Left  drive motor:        "left_drive"
+ * Motor channel:       Right drive motor:        "right_drive"
+ * Motor channel:       Manipulator drive motor:  "left_arm"
+ * N/A Servo channel:  Servo to open left claw:  "left_hand"
+ * N/A Servo channel:  Servo to open right claw: "right_hand"
  */
-public class MattSetupPushbot
+public class MattSetupActuators
 {
     /* Public actuator members. */
     public DcMotor  leftMotor   = null;
@@ -30,18 +30,18 @@ public class MattSetupPushbot
     public DcMotor  armMotor    = null;
 
 
-    public static final double COUNTS_PER_MOTOR_REV     = 1440 ;    // eg: TETRIX Motor Encoder
-    public static final double DRIVE_GEAR_REDUCTION     = 2.0 ;     // This is < 1.0 if geared UP
-    public static final double WHEEL_DIAMETER_INCHES    = 4.0 ;     // For figuring circumference
-    public static final double COUNTS_PER_INCH          = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-    public static final double INCHES_PER_ANGLE         = (6 / 90);
+    public static final double COUNTS_PER_MOTOR_REV     = 1440;    // eg: TETRIX Motor Encoder
+    public static final double DRIVE_GEAR_REDUCTION     = 2.0;     // This is < 1.0 if geared UP
+    public static final double WHEEL_DIAMETER_INCHES    = 4.0 * (24.5/24.0);  // wheel circumference with real-life travel distance adjustment
+    public static final double COUNTS_PER_INCH          = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.14159269);
+    public static final double INCHES_PER_ANGLE         = (11.5 / 90.0); // calibration affected by the distance between the driving wheels
 
     /* local members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
-    public MattSetupPushbot(){
+    public MattSetupActuators(){
 
     }
 

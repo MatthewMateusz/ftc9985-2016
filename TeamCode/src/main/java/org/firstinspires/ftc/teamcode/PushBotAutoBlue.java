@@ -77,8 +77,8 @@ public class PushBotAutoBlue extends PushBotAutomation {
     private static final double     RIGHT_ANGLE             = 90.0;
     private static final double     WHITE_THRESHOLD         = 0.2;  // spans between 0.1 - 0.5 from dark to light
 
-    private static final double     SHORT_TIMEOUT           = 1;
-    private static final double     MEDIUM_TIMEOUT          = 3;
+    private static final double     SHORT_TIMEOUT           = 3;
+    private static final double     MEDIUM_TIMEOUT          = 5;
     private static final double     LONG_TIMEOUT            = 10;
 
     @Override

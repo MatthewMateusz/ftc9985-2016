@@ -73,8 +73,8 @@ public class PushBotAutoTest extends PushBotAutomation {
     private static final double     RIGHT_ANGLE             = 90.0;
     private static final double     WHITE_THRESHOLD         = 0.2;  // spans between 0.1 - 0.5 from dark to light
 
-    private static final double     SHORT_TIMEOUT           = 1;
-    private static final double     MEDIUM_TIMEOUT          = 3;
+    private static final double     SHORT_TIMEOUT           = 3;
+    private static final double     MEDIUM_TIMEOUT          = 5;
     private static final double     LONG_TIMEOUT            = 10;
 
     @Override
@@ -121,7 +121,7 @@ public class PushBotAutoTest extends PushBotAutomation {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveDistance(DRIVE_SPEED , 12.0,      SHORT_TIMEOUT);
+//      driveDistance(DRIVE_SPEED , 24.0,      LONG_TIMEOUT);
         turnInPlace(TURN_SPEED, RIGHT_ANGLE, MEDIUM_TIMEOUT);
 
         telemetry.addData("Path", "Complete"); telemetry.update();
