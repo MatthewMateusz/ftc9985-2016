@@ -35,11 +35,7 @@ package org.firstinspires.ftc.teamcode;
 import android.app.Activity;
 import android.view.View;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -59,8 +55,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Autonomous One", group="Auto")
-public class PushBotAuto extends PushBotAutomation {
+@Autonomous(name="Autonomous Test", group="Auto")
+public class PushBotAutoTest extends PushBotAutomation {
 
 
     /* Declare OpMode members. */
@@ -77,8 +73,8 @@ public class PushBotAuto extends PushBotAutomation {
     private static final double     RIGHT_ANGLE             = 90.0;
     private static final double     WHITE_THRESHOLD         = 0.2;  // spans between 0.1 - 0.5 from dark to light
 
-    private static final double     SHORT_TIMEOUT           = 1;
-    private static final double     MEDIUM_TIMEOUT          = 3;
+    private static final double     SHORT_TIMEOUT           = 3;
+    private static final double     MEDIUM_TIMEOUT          = 5;
     private static final double     LONG_TIMEOUT            = 10;
 
     @Override
@@ -125,46 +121,9 @@ public class PushBotAuto extends PushBotAutomation {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveDistance(DRIVE_SPEED , 12.0,      SHORT_TIMEOUT);
+//      driveDistance(DRIVE_SPEED , 24.0,      LONG_TIMEOUT);
         turnInPlace(TURN_SPEED, RIGHT_ANGLE, MEDIUM_TIMEOUT);
 
-        if (true) {
-            telemetry.addData("Path", "Testing - early termination"); telemetry.update();
-            return; // early dismissal when testing
-        }
-
-        driveDistance(DRIVE_SPEED, 1, LONG_TIMEOUT);
-        driveToBumper(APPROACH_SPEED, FAR_AWAY,  MEDIUM_TIMEOUT);
-        driveDistance(APPROACH_SPEED , -1.0, MEDIUM_TIMEOUT);
-        turnInPlace(TURN_SPEED, -RIGHT_ANGLE, 5);
-
-        driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, FAR_AWAY, MEDIUM_TIMEOUT);
-
-        if (sensors.colorSensor.blue() > sensors.colorSensor.red())
-        {
-            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
-        }
-        else
-        {
-            driveDistance(APPROACH_SPEED, 1, MEDIUM_TIMEOUT);
-            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
-        }
-
-        driveDistance(DRIVE_SPEED, 1, MEDIUM_TIMEOUT);
-
-        driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, 99, MEDIUM_TIMEOUT);
-
-        if (sensors.colorSensor.blue() > sensors.colorSensor.red())
-        {
-            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
-        }
-        else
-        {
-            driveDistance(APPROACH_SPEED, 1, MEDIUM_TIMEOUT);
-            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
-        }
-
-        // sleep(1000);  // pause is needed only in case the last command pertained to servo motors
         telemetry.addData("Path", "Complete"); telemetry.update();
     }
 

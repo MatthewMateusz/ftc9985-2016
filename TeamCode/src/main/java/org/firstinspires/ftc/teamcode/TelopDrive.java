@@ -36,7 +36,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 // import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
  * This file provides basic Telop driving for a Pushbot robot.
@@ -57,7 +56,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 public class TelopDrive extends OpMode{
 
     /* Declare OpMode members. */
-    private MattSetupPushbot robot              = new MattSetupPushbot();   // Use Pushbot's actuators
+    private MattSetupActuators robot              = new MattSetupActuators();   // Use Pushbot's actuators
     // use the class above that was created to define a Pushbot's hardware
 //  private double              clawOffset      = 0.0 ;                     // Servo mid position
 
