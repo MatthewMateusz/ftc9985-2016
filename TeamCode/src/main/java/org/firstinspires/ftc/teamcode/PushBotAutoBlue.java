@@ -69,18 +69,6 @@ public class PushBotAutoBlue extends PushBotAutomation {
 
     // use the classes above that was created to define a Pushbot's hardware
 
-    private static final double     DRIVE_SPEED             = 0.6;
-    private static final double     APPROACH_SPEED          = 0.5;
-    private static final double     TURN_SPEED              = 0.5;
-    private static final double     ARM_SPEED               = 0.1;
-    private static final double     FAR_AWAY                = 99.0;
-    private static final double     RIGHT_ANGLE             = 90.0;
-    private static final double     WHITE_THRESHOLD         = 0.2;  // spans between 0.1 - 0.5 from dark to light
-
-    private static final double     SHORT_TIMEOUT           = 3;
-    private static final double     MEDIUM_TIMEOUT          = 5;
-    private static final double     LONG_TIMEOUT            = 10;
-
     @Override
     public void runOpMode() {
         /*
@@ -98,17 +86,8 @@ public class PushBotAutoBlue extends PushBotAutomation {
         // color of the Robot Controller app to match the hue detected by the RGB sensor.
         final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(com.qualcomm.ftcrobotcontroller.R.id.RelativeLayout);
 
-        // bPrevState and bCurrState represent the previous and current state of the button.
-        boolean bPrevState = false;
-        boolean bCurrState = false;
-
-
-
-
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
-
+        telemetry.addData("Status", "Resetting Encoders");  telemetry.update();
         resetEncoders();
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition()); telemetry.update();
@@ -116,7 +95,11 @@ public class PushBotAutoBlue extends PushBotAutomation {
         // Display the light level while we are waiting to start
         while (!isStarted())
         {
-            telemetry.addData("Light Level", sensors.lightSensor.getLightDetected()); telemetry.update();
+            telemetry.addData("Light Level",    sensors.lightSensor.getLightDetected());
+            telemetry.addData("Red Level",      sensors.colorSensor.red()   );
+            telemetry.addData("Green Level",    sensors.colorSensor.green() );
+            telemetry.addData("Blue Level",     sensors.colorSensor.blue()  );
+            telemetry.update();
             idle();
         }
 
@@ -125,35 +108,37 @@ public class PushBotAutoBlue extends PushBotAutomation {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveDistance(DRIVE_SPEED, 1, LONG_TIMEOUT);
-        driveToBumper(APPROACH_SPEED, FAR_AWAY,  MEDIUM_TIMEOUT);
-        driveDistance(APPROACH_SPEED , -1.0, MEDIUM_TIMEOUT);
-        turnInPlace(TURN_SPEED, -RIGHT_ANGLE, 5);
+        driveDistance(DRIVE_SPEED, 36.0,        MEDIUM_TIMEOUT);
+        turnInPlace(TURN_SPEED, TURN_RIGHT,     MEDIUM_TIMEOUT);
 
-        driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, FAR_AWAY, MEDIUM_TIMEOUT);
+        driveDistance(DRIVE_SPEED, 24.0,        MEDIUM_TIMEOUT);
+        driveToBumper(APPROACH_SPEED,           LONG_TIMEOUT);
+        driveDistance(APPROACH_SPEED , -1.0,    MEDIUM_TIMEOUT);
+        turnInPlace(TURN_SPEED, TURN_LEFT,      MEDIUM_TIMEOUT);
 
-        if (sensors.colorSensor.blue() > sensors.colorSensor.red())
-        {
-            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
-        }
-        else
-        {
-            driveDistance(APPROACH_SPEED, 1, MEDIUM_TIMEOUT);
-            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
-        }
-
-        driveDistance(DRIVE_SPEED, 1, MEDIUM_TIMEOUT);
-
-        driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, 99, MEDIUM_TIMEOUT);
+        driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
 
         if (sensors.colorSensor.blue() > sensors.colorSensor.red())
         {
-            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
+            pushButton(ARM_SPEED, SHORT_TIMEOUT);
         }
         else
         {
-            driveDistance(APPROACH_SPEED, 1, MEDIUM_TIMEOUT);
-            pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
+            driveDistance(APPROACH_SPEED, 1.0, MEDIUM_TIMEOUT);
+            pushButton(ARM_SPEED, SHORT_TIMEOUT);
+        }
+
+        driveDistance(DRIVE_SPEED, 12.0,        MEDIUM_TIMEOUT);
+        driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
+
+        if (sensors.colorSensor.blue() > sensors.colorSensor.red())
+        {
+            pushButton(ARM_SPEED, SHORT_TIMEOUT);
+        }
+        else
+        {
+            driveDistance(APPROACH_SPEED, 1.0, MEDIUM_TIMEOUT);
+            pushButton(ARM_SPEED, SHORT_TIMEOUT);
         }
 
         // sleep(1000);  // pause is needed only in case the last command pertained to servo motors
