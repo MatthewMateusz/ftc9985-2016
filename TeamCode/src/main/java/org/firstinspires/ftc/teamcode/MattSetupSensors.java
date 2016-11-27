@@ -43,7 +43,7 @@ public class MattSetupSensors {
         touchSensorArm   = (ModernRoboticsDigitalTouchSensor) hwMap.touchSensor.get("touchSensorArm");
 
         //Define lightSensor & enbale led
-        lightSensor = hwMap.opticalDistanceSensor.get("lightSensor");
+        lightSensor = hwMap.opticalDistanceSensor.get("sensor_light");
         lightSensor.enableLed(true);
 
         // Define ColorSensor & enbale led
