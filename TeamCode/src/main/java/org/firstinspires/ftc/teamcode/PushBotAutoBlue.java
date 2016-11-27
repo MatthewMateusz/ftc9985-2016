@@ -59,8 +59,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Autonomous One", group="Auto")
-public class PushBotAuto extends PushBotAutomation {
+@Autonomous(name="Autonomous Blue", group="Auto")
+public class PushBotAutoBlue extends PushBotAutomation {
 
 
     /* Declare OpMode members. */
@@ -124,14 +124,6 @@ public class PushBotAuto extends PushBotAutomation {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
-        driveDistance(DRIVE_SPEED , 12.0,      SHORT_TIMEOUT);
-        turnInPlace(TURN_SPEED, RIGHT_ANGLE, MEDIUM_TIMEOUT);
-
-        if (true) {
-            telemetry.addData("Path", "Testing - early termination"); telemetry.update();
-            return; // early dismissal when testing
-        }
 
         driveDistance(DRIVE_SPEED, 1, LONG_TIMEOUT);
         driveToBumper(APPROACH_SPEED, FAR_AWAY,  MEDIUM_TIMEOUT);
