@@ -66,7 +66,26 @@ abstract public class PushBotAutomation extends LinearOpMode {
 
     public void turnInPlace(double speed, double degrees, double timeoutS) {
         telemetry.addData("Status", "turnInPlace");  telemetry.update();
-        encoderDrive(speed, degrees* MattSetupActuators.INCHES_PER_ANGLE, -degrees* MattSetupActuators.INCHES_PER_ANGLE, timeoutS);
+        if ( speed<0.0 ) {
+            // speed for the encoderDrive(...) must be always positive!
+            speed=-speed;
+            degrees=-degrees;
+        }
+        encoderDrive(speed, degrees* MattSetupActuators.INCHES_PER_ANGLE_INPLACE, -degrees* MattSetupActuators.INCHES_PER_ANGLE_INPLACE, timeoutS);
+    }
+
+    public void turnAndDrag(double speed, double degrees, double timeoutS) {
+        telemetry.addData("Status", "turnAndDrag");  telemetry.update();
+        if ( speed<0.0 ) {
+            // speed for the encoderDrive(...) must be always positive!
+            speed=-speed;
+            degrees=-degrees;
+        }
+        if (degrees>=0.0) {
+            encoderDrive(speed, degrees* MattSetupActuators.INCHES_PER_ANGLE_DRAG, 0, timeoutS);
+        } else {
+            encoderDrive(speed, 0, -degrees* MattSetupActuators.INCHES_PER_ANGLE_DRAG, timeoutS);
+        }
     }
 
     public void driveDistance(double speed, double distance, double timeoutS) {
@@ -119,7 +138,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
         robot.armMotor.setPower(0);
         sleep(500);
         robot.armMotor.setPower(speed);
-        sleep(100);
+        sleep(1500);
         robot.armMotor.setPower(0);
         idle();
     }
@@ -157,9 +176,9 @@ abstract public class PushBotAutomation extends LinearOpMode {
             robot.rightMotor.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (robot.leftMotor.isBusy() && robot.rightMotor.isBusy())) {
+            while (opModeIsActive() && (runtime.seconds() < timeoutS) &&
+                    ( robot.leftMotor.isBusy() || robot.rightMotor.isBusy() ) // && -> || --correction for the case of turn and drag
+                    ) {
 
                 // Display it for the driver.
                 telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
@@ -167,6 +186,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
                         robot.leftMotor.getCurrentPosition(),
                         robot.rightMotor.getCurrentPosition());
                 telemetry.update();
+                idle();
             }
 
             // Stop all motion;
