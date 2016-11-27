@@ -10,9 +10,27 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 abstract public class PushBotAutomation extends LinearOpMode {
 
-    /* Declare OpMode members. */
+
+    /* Declare OpMode constants for users */
+    public static final double     FULL_SPEED       = 1.0;
+    public static final double     DRIVE_SPEED      = 0.75;
+    public static final double     APPROACH_SPEED   = 0.5;
+
+    public static final double     TURN_SPEED       = 0.5;
+    public static final double     RIGHT_ANGLE      = 90.0;
+    public static final double     TURN_LEFT        = -RIGHT_ANGLE;
+    public static final double     TURN_RIGHT       = RIGHT_ANGLE;
+    public static final double     WHITE_THRESHOLD  = 0.6;  // background spans between 0.1 - 0.5 from dark to light
+
+    public static final double     ARM_SPEED        = 0.1;
+
+    public static final double     SHORT_TIMEOUT    = 3;
+    public static final double     MEDIUM_TIMEOUT   = 5;
+    public static final double     LONG_TIMEOUT     = 10;
+
+    /* Declare OpMode data members */
     MattSetupActuators robot   = new MattSetupActuators();  // Use Pushbot's actuators
-    MattSetupSensors sensors = new MattSetupSensors();  // Use Pushbot's sensors
+    MattSetupSensors   sensors = new MattSetupSensors();  // Use Pushbot's sensors
     // use the classes above that was created to define a Pushbot's hardware
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -48,15 +66,20 @@ abstract public class PushBotAutomation extends LinearOpMode {
 
     public void turnInPlace(double speed, double degrees, double timeoutS) {
         telemetry.addData("Status", "turnInPlace");  telemetry.update();
-        encoderDrive(speed, degrees*robot.INCHES_PER_ANGLE, -degrees*robot.INCHES_PER_ANGLE, timeoutS);
+        encoderDrive(speed, degrees* MattSetupActuators.INCHES_PER_ANGLE, -degrees* MattSetupActuators.INCHES_PER_ANGLE, timeoutS);
     }
 
-    public void driveDistance(double speed, double inches, double timeoutS) {
+    public void driveDistance(double speed, double distance, double timeoutS) {
         telemetry.addData("Status", "driveDistance");  telemetry.update();
-        encoderDrive(speed, inches, inches, timeoutS);
+        if ( speed<0.0 ) {
+            // speed for the encoderDrive(...) must be always positive!
+            speed=-speed;
+            distance=-distance;
+        }
+        encoderDrive(speed, distance, distance, timeoutS);
     }
 
-    public void driveToBumper(double speed, double maxdistance, double timeoutS) {
+    public void driveToBumper(double speed, double timeoutS) {
         telemetry.addData("Status", "driveToBumper");  telemetry.update();
         runtime.reset(); // reset the timeout time and start motion.
         robot.leftMotor.setPower(speed);
@@ -69,7 +92,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
         robot.rightMotor.setPower(0);
     }
 
-    public void driveToWhiteLine(double speed, double lightThreshold, double maxdistance, double timeoutS) {
+    public void driveToWhiteLine(double speed, double lightThreshold, double timeoutS) {
         telemetry.addData("Status", "driveToColor");  telemetry.update();
         runtime.reset(); // reset the timeout time and start motion.
         robot.leftMotor.setPower(speed);
@@ -86,6 +109,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
 
     public void pushButton(double speed, double timeoutS) {
         telemetry.addData("Status", "pushButton");  telemetry.update();
+        if (speed<0.0) speed=-speed; // we control the direction internally
         runtime.reset(); // reset the timeout time and start motion.
         robot.armMotor.setPower(-speed);
         while ( opModeIsActive() && (runtime.seconds() < timeoutS) && (sensors.touchSensorFront.isPressed()== false) )
@@ -118,8 +142,8 @@ abstract public class PushBotAutomation extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = robot.leftMotor.getCurrentPosition() + (int)(leftInches * robot.COUNTS_PER_INCH);
-            newRightTarget = robot.rightMotor.getCurrentPosition() + (int) (rightInches * robot.COUNTS_PER_INCH);
+            newLeftTarget = robot.leftMotor.getCurrentPosition() + (int)(leftInches * MattSetupActuators.COUNTS_PER_INCH);
+            newRightTarget = robot.rightMotor.getCurrentPosition() + (int) (rightInches * MattSetupActuators.COUNTS_PER_INCH);
             robot.leftMotor.setTargetPosition(newLeftTarget);
             robot.rightMotor.setTargetPosition(newRightTarget);
 
