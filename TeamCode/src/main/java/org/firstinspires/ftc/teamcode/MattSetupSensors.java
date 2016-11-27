@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsDigitalTouchSensor;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
@@ -17,10 +18,12 @@ public class MattSetupSensors {
     ModernRoboticsDigitalTouchSensor touchSensorArm = null;
 
     //ODS *Addon
-    OpticalDistanceSensor lightSensor;
+    OpticalDistanceSensor lightSensor = null;
 
     //MRColor Sensor *Addon
-    ColorSensor colorSensor;
+    ColorSensor colorSensor = null;
+
+    ModernRoboticsI2cGyro gyroSensor = null;
 
     /* local members. */
     HardwareMap hwMap =  null;
@@ -46,6 +49,14 @@ public class MattSetupSensors {
         // Define ColorSensor & enbale led
         colorSensor = hwMap.colorSensor.get("colorSensor");
         colorSensor.enableLed(true);
+
+        // get a reference to a Modern Robotics GyroSensor object if available
+        try {
+            gyroSensor = (ModernRoboticsI2cGyro) hwMap.gyroSensor.get("gyro");
+            gyroSensor.resetZAxisIntegrator();
+        } catch (Exception e) {
+            gyroSensor = null;
+        }
     }
 
 

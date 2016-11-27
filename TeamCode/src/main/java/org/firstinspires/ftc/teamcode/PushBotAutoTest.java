@@ -101,6 +101,9 @@ public class PushBotAutoTest extends PushBotAutomation {
 
         telemetry.addData(">", "Robot Ready."); telemetry.update();
 
+//      driveDistance(DRIVE_SPEED , -1.0,      SHORT_TIMEOUT)
+//      turnInPlace(TURN_SPEED, -RIGHT_ANGLE,  MEDIUM_TIMEOUT);
+//      driveToWhiteLine(- APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -110,15 +113,12 @@ public class PushBotAutoTest extends PushBotAutomation {
 
 //      // Red test
 //      driveToBumper(APPROACH_SPEED, LONG_TIMEOUT);
-//      driveDistance(DRIVE_SPEED , -1.0,      SHORT_TIMEOUT)
-//      turnInPlace(TURN_SPEED, -RIGHT_ANGLE,  MEDIUM_TIMEOUT);
-//      driveToWhiteLine(- APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
 //      pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
 
         driveDistance(DRIVE_SPEED, 24.0,        MEDIUM_TIMEOUT);
         driveToBumper(APPROACH_SPEED,           LONG_TIMEOUT);
-        driveDistance(APPROACH_SPEED , -1.0,    MEDIUM_TIMEOUT);
-        turnInPlace(TURN_SPEED, TURN_RIGHT,     MEDIUM_TIMEOUT);
+        driveDistance(APPROACH_SPEED , -6.0,    MEDIUM_TIMEOUT);
+        turnAndDrag(TURN_SPEED, TURN_LEFT,      MEDIUM_TIMEOUT);
 
         driveToWhiteLine(-APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
 
