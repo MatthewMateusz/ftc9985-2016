@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 abstract public class PushBotAutomation extends LinearOpMode {
 
     /* Declare OpMode members. */
-    MattSetupPushbot robot   = new MattSetupPushbot();  // Use Pushbot's actuators
+    MattSetupActuators robot   = new MattSetupActuators();  // Use Pushbot's actuators
     MattSetupSensors sensors = new MattSetupSensors();  // Use Pushbot's sensors
     // use the classes above that was created to define a Pushbot's hardware
     private ElapsedTime runtime = new ElapsedTime();
