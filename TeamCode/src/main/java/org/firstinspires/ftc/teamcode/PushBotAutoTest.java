@@ -37,8 +37,6 @@ import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import java.util.concurrent.TimeoutException;
-
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
  * It uses the common Pushbot hardware class to define the drive on the robot.
@@ -90,54 +88,29 @@ public class PushBotAutoTest extends PushBotAutomation {
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition()); telemetry.update();
 
-        // Try to calibrate the gyro if available
-        // make sure the gyro is calibrated before continuing or disable the gyro
-        if (sensors.gyroSensor!=null) {
-            telemetry.addData("Status", "Calibrating gyro");  telemetry.update();
-            try {
-                sensors.gyroSensor.calibrate();
-                Boolean flash_color_led = true;
-                int count=0;
-                while (!isStopRequested() && sensors.gyroSensor.isCalibrating())  {
-                    sensors.colorSensor.enableLed(flash_color_led); flash_color_led=!flash_color_led;
-                    count++; if (count>500) throw new TimeoutException();
-                    sleep(100);
-                }
-                telemetry.addData("Status", "Gyro calibration done");  telemetry.update();
-            } catch (Exception e) {
-                sensors.gyroSensor=null;
-                telemetry.addData("Status", "Gyro calibration failed");  telemetry.update();
-            }
-        }
+        // Try to calibrate the gyro if available and make sure it is calibrated before continuing or disable the gyro
+        calibrateGyroOrFail(10);
         sensors.colorSensor.enableLed(false);
 
-            // Display the light level while we are waiting to start
-        while (!isStarted()) {
-            telemetry.addData("Light Level ", sensors.lightSensor.getLightDetected());
-            telemetry.addData("Red Level   ", sensors.colorSensor.red());
-            telemetry.addData("Green Level ", sensors.colorSensor.green());
-            telemetry.addData("Blue Level  ", sensors.colorSensor.blue());
-            if (sensors.gyroSensor != null) telemetry.addData("Gyro Z      ", sensors.gyroSensor.getIntegratedZValue());
-            telemetry.update();
-            idle();
-        }
-
-        telemetry.addData(">", "Robot Ready."); telemetry.update();
+        // Display the sensor levels while we are waiting to start
+        waitForStartAndDisplayWhileWaiting();
+        telemetry.addData(">", "Robot Ready"); telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        telemetry.addData("Test", "Started"); telemetry.update();
 
-//      // Callibration:
+//      // Robot actuator constant calibration:
 //      driveDistance(DRIVE_SPEED , 24.0,      LONG_TIMEOUT);
 //      turnInPlace(TURN_SPEED, RIGHT_ANGLE, MEDIUM_TIMEOUT);
 
-//      // Red test
+//      // Driving with sensors tests:
 //      driveToBumper(APPROACH_SPEED, LONG_TIMEOUT);
+//      driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
 //      pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
 
 
-
-        telemetry.addData("Path", "Complete"); telemetry.update();
+        telemetry.addData("Test", "Complete"); telemetry.update();
     }
 
 

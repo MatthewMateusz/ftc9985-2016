@@ -23,6 +23,7 @@ public class MattSetupSensors {
     //MRColor Sensor *Addon
     public ColorSensor colorSensor = null;
 
+    // MRGyro sensor, NOTE: will be set back to NULL if problems with initialization or calibration
     public ModernRoboticsI2cGyro gyroSensor = null;
 
     /* local members. */
@@ -42,7 +43,7 @@ public class MattSetupSensors {
         touchSensorFront = (ModernRoboticsDigitalTouchSensor) hwMap.touchSensor.get("touchSensorFront");
         touchSensorArm   = (ModernRoboticsDigitalTouchSensor) hwMap.touchSensor.get("touchSensorArm");
 
-        //Define lightSensor & enbale led
+        //Define lightSensor & enbale its led
         lightSensor = hwMap.opticalDistanceSensor.get("lightSensor");
         lightSensor.enableLed(true); // brightness of reflected lioght is measured
 
@@ -58,6 +59,5 @@ public class MattSetupSensors {
             gyroSensor = null;
         }
     }
-
 
 }
