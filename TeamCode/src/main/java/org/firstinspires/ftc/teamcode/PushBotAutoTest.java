@@ -104,6 +104,17 @@ public class PushBotAutoTest extends PushBotAutomation {
 //      driveDistance(DRIVE_SPEED , 24.0,      LONG_TIMEOUT);
 //      turnInPlace(TURN_SPEED, RIGHT_ANGLE, MEDIUM_TIMEOUT);
 
+
+
+        // Testing gyro heading by turing over cumulative 360 degrees
+        while (opModeIsActive()) {
+            turnInPlace(TURN_SPEED, 40, MEDIUM_TIMEOUT);
+            sleep(500);
+            driveDistance(APPROACH_SPEED, 6.0, MEDIUM_TIMEOUT);
+            sleep(500);
+        }
+
+
 //      // Driving with sensors tests:
 //      driveToBumper(APPROACH_SPEED, LONG_TIMEOUT);
 //      driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
