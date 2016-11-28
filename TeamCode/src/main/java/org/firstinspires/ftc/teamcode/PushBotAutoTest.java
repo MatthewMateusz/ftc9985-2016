@@ -37,6 +37,8 @@ import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import java.util.concurrent.TimeoutException;
+
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
  * It uses the common Pushbot hardware class to define the drive on the robot.
@@ -88,22 +90,40 @@ public class PushBotAutoTest extends PushBotAutomation {
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition()); telemetry.update();
 
-        // Display the light level while we are waiting to start
-        while (!isStarted())
-        {
-            telemetry.addData("Light Level",    sensors.lightSensor.getLightDetected());
-            telemetry.addData("Red Level",      sensors.colorSensor.red()   );
-            telemetry.addData("Green Level",    sensors.colorSensor.green() );
-            telemetry.addData("Blue Level",     sensors.colorSensor.blue()  );
+        // Try to calibrate the gyro if available
+        // make sure the gyro is calibrated before continuing or disable the gyro
+        if (sensors.gyroSensor!=null) {
+            telemetry.addData("Status", "Calibrating gyro");  telemetry.update();
+            try {
+                sensors.gyroSensor.calibrate();
+                Boolean flash_color_led = true;
+                int count=0;
+                while (!isStopRequested() && sensors.gyroSensor.isCalibrating())  {
+                    sensors.colorSensor.enableLed(flash_color_led); flash_color_led=!flash_color_led;
+                    count++; if (count>500) throw new TimeoutException();
+                    sleep(100);
+                }
+                telemetry.addData("Status", "Gyro calibration done");  telemetry.update();
+            } catch (Exception e) {
+                sensors.gyroSensor=null;
+                telemetry.addData("Status", "Gyro calibration failed");  telemetry.update();
+            }
+        }
+        sensors.colorSensor.enableLed(false);
+
+            // Display the light level while we are waiting to start
+        while (!isStarted()) {
+            telemetry.addData("Light Level ", sensors.lightSensor.getLightDetected());
+            telemetry.addData("Red Level   ", sensors.colorSensor.red());
+            telemetry.addData("Green Level ", sensors.colorSensor.green());
+            telemetry.addData("Blue Level  ", sensors.colorSensor.blue());
+            if (sensors.gyroSensor != null) telemetry.addData("Gyro Z      ", sensors.gyroSensor.getIntegratedZValue());
             telemetry.update();
             idle();
         }
 
         telemetry.addData(">", "Robot Ready."); telemetry.update();
 
-//      driveDistance(DRIVE_SPEED , -1.0,      SHORT_TIMEOUT)
-//      turnInPlace(TURN_SPEED, -RIGHT_ANGLE,  MEDIUM_TIMEOUT);
-//      driveToWhiteLine(- APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -115,35 +135,7 @@ public class PushBotAutoTest extends PushBotAutomation {
 //      driveToBumper(APPROACH_SPEED, LONG_TIMEOUT);
 //      pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
 
-        driveDistance(DRIVE_SPEED, 24.0,        MEDIUM_TIMEOUT);
-        driveToBumper(APPROACH_SPEED,           LONG_TIMEOUT);
-        driveDistance(APPROACH_SPEED , -6.0,    MEDIUM_TIMEOUT);
-        turnAndDrag(TURN_SPEED, TURN_LEFT,      MEDIUM_TIMEOUT);
 
-        driveToWhiteLine(-APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
-
-        if (sensors.colorSensor.blue() < sensors.colorSensor.red())
-        {
-            pushButton(ARM_SPEED, SHORT_TIMEOUT);
-        }
-        else
-        {
-            driveDistance(APPROACH_SPEED, -1.0, MEDIUM_TIMEOUT);
-            pushButton(ARM_SPEED, SHORT_TIMEOUT);
-        }
-
-        driveDistance(DRIVE_SPEED, -12.0,       MEDIUM_TIMEOUT);
-        driveToWhiteLine(-APPROACH_SPEED, WHITE_THRESHOLD, MEDIUM_TIMEOUT);
-
-        if (sensors.colorSensor.blue() < sensors.colorSensor.red())
-        {
-            pushButton(ARM_SPEED, SHORT_TIMEOUT);
-        }
-        else
-        {
-            driveDistance(APPROACH_SPEED, -1.0, MEDIUM_TIMEOUT);
-            pushButton(ARM_SPEED, SHORT_TIMEOUT);
-        }
 
         telemetry.addData("Path", "Complete"); telemetry.update();
     }

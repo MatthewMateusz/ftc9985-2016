@@ -41,6 +41,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.concurrent.TimeoutException;
+
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
  * It uses the common Pushbot hardware class to define the drive on the robot.
@@ -92,13 +94,33 @@ public class PushBotAutoBlue extends PushBotAutomation {
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition()); telemetry.update();
 
+        // Try to calibrate the gyro if available
+        // make sure the gyro is calibrated before continuing or disable the gyro
+        if (sensors.gyroSensor!=null) {
+            telemetry.addData("Status", "Calibrating gyro");  telemetry.update();
+            try {
+                sensors.gyroSensor.calibrate();
+                Boolean flash_color_led = true;
+                int count=0;
+                while (!isStopRequested() && sensors.gyroSensor.isCalibrating())  {
+                    sensors.colorSensor.enableLed(flash_color_led); flash_color_led=!flash_color_led;
+                    count++; if (count>500) throw new TimeoutException();
+                    sleep(100);
+                }
+                telemetry.addData("Status", "Gyro calibration done");  telemetry.update();
+            } catch (Exception e) {
+                sensors.gyroSensor=null;
+                telemetry.addData("Status", "Gyro calibration failed");  telemetry.update();
+            }
+        }
+
         // Display the light level while we are waiting to start
-        while (!isStarted())
-        {
-            telemetry.addData("Light Level",    sensors.lightSensor.getLightDetected());
-            telemetry.addData("Red Level",      sensors.colorSensor.red()   );
-            telemetry.addData("Green Level",    sensors.colorSensor.green() );
-            telemetry.addData("Blue Level",     sensors.colorSensor.blue()  );
+        while (!isStarted()) {
+            telemetry.addData("Light Level", sensors.lightSensor.getLightDetected());
+            telemetry.addData("Red Level", sensors.colorSensor.red());
+            telemetry.addData("Green Level", sensors.colorSensor.green());
+            telemetry.addData("Blue Level", sensors.colorSensor.blue());
+            if (sensors.gyroSensor != null) telemetry.addData("Gyro Z", sensors.gyroSensor.getIntegratedZValue());
             telemetry.update();
             idle();
         }
@@ -108,13 +130,10 @@ public class PushBotAutoBlue extends PushBotAutomation {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveDistance(DRIVE_SPEED, 48.0,        MEDIUM_TIMEOUT);
-        turnInPlace(TURN_SPEED, TURN_RIGHT,     MEDIUM_TIMEOUT);
-
-        driveDistance(DRIVE_SPEED, 24.0,        MEDIUM_TIMEOUT);
+        driveDistance(DRIVE_SPEED, 6.0,         MEDIUM_TIMEOUT);
+        turnInPlace(TURN_SPEED, TURN_RIGHT/2.0, MEDIUM_TIMEOUT);
         driveToBumper(APPROACH_SPEED,           LONG_TIMEOUT);
-        driveDistance(APPROACH_SPEED , -6.0,    MEDIUM_TIMEOUT);
-        turnAndDrag(TURN_SPEED, TURN_LEFT,      MEDIUM_TIMEOUT);
+        turnAndDrag(TURN_SPEED, TURN_LEFT/2.0,  MEDIUM_TIMEOUT);
 
         driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
 
@@ -128,7 +147,7 @@ public class PushBotAutoBlue extends PushBotAutomation {
             pushButton(ARM_SPEED, SHORT_TIMEOUT);
         }
 
-        driveDistance(DRIVE_SPEED, 12.0,        MEDIUM_TIMEOUT);
+        driveDistance(DRIVE_SPEED, 18.0,        MEDIUM_TIMEOUT);
         driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
 
         if (sensors.colorSensor.blue() > sensors.colorSensor.red())
