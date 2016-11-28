@@ -70,6 +70,5 @@ public class ConceptRegisterOpModes
     manager.register("Autonomous Blue" , PushBotAutoBlue.class);
     manager.register("Autonomous Red" ,  PushBotAutoRed.class);
     manager.register("Autonomous Test" , PushBotAutoTest.class);
-
   }
 }
