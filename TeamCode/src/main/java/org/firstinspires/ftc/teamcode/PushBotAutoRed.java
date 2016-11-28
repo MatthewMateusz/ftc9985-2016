@@ -88,17 +88,12 @@ public class PushBotAutoRed extends PushBotAutomation {
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition()); telemetry.update();
 
-        // Display the light level while we are waiting to start
-        while (!isStarted())
-        {
-            telemetry.addData("Light Level",    sensors.lightSensor.getLightDetected());
-            telemetry.addData("Red Level",      sensors.colorSensor.red()   );
-            telemetry.addData("Green Level",    sensors.colorSensor.green() );
-            telemetry.addData("Blue Level",     sensors.colorSensor.blue()  );
-            telemetry.update();
-            idle();
-        }
+        // Try to calibrate the gyro if available and make sure it is calibrated before continuing or disable the gyro
+        calibrateGyroOrFail(10);
+        sensors.colorSensor.enableLed(false);
 
+        // Display the sensor levels while we are waiting to start
+        waitForStartAndDisplayWhileWaiting();
         telemetry.addData(">", "Robot Ready."); telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)

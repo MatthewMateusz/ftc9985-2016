@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.concurrent.TimeoutException;
+
 /**
  * Created on 11/25/2016.
  */
@@ -46,6 +48,39 @@ abstract public class PushBotAutomation extends LinearOpMode {
         telemetry.addData("Status", "Init Mat Sensors");    //
         sensors.init(hardwareMap);
         telemetry.addData("Status", "Init Complete");    //
+    }
+
+    public void calibrateGyroOrFail(double timeoutS) {
+        if (sensors.gyroSensor!=null) {
+            telemetry.addData("Status", "Calibrating gyro for up to "+timeoutS);  telemetry.update();
+            try {
+                runtime.reset(); // reset the timeout time and start motion.
+                sensors.gyroSensor.calibrate();
+                Boolean flash_color_led = true;
+                while (!isStopRequested() && sensors.gyroSensor.isCalibrating())  {
+                    if (runtime.seconds() > timeoutS) throw new TimeoutException();
+                    sensors.colorSensor.enableLed(flash_color_led); flash_color_led=!flash_color_led;
+                    sleep(100);
+                }
+                telemetry.addData("Status", "Gyro calibration done");  telemetry.update();
+            } catch (Exception e) {
+                sensors.gyroSensor=null;
+                telemetry.addData("Status", "Gyro calibration failed");  telemetry.update();
+            }
+        }
+    }
+
+    // Display the sensor levels while we are waiting to start
+    public void waitForStartAndDisplayWhileWaiting() {
+        while (!isStarted()) {
+            telemetry.addData("Light Level ", sensors.lightSensor.getLightDetected());
+            telemetry.addData("Red Level   ", sensors.colorSensor.red());
+            telemetry.addData("Green Level ", sensors.colorSensor.green());
+            telemetry.addData("Blue Level  ", sensors.colorSensor.blue());
+            if (sensors.gyroSensor != null) telemetry.addData("Gyro Z      ", sensors.gyroSensor.getIntegratedZValue());
+            telemetry.update();
+            idle();
+        }
     }
 
     public void resetEncoders() {
@@ -196,9 +231,40 @@ abstract public class PushBotAutomation extends LinearOpMode {
             // Turn off RUN_TO_POSITION
             robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //  sleep(250);   // optional pause after each move
         }
     }
+
+    /***
+     *
+     * waitForTick implements a periodic delay. However, this acts like a metronome with a regular
+     * periodic tick.  This is used to compensate for varying processing times for each cycle.
+     * The function looks at the elapsed cycle time, and sleeps for the remaining time interval.
+     *
+     * @param periodMs  Length of wait cycle in mSec.
+     */
+    public void waitForTick(long periodMs) {
+
+        long  remaining = periodMs - (long)period.milliseconds();
+
+        // sleep for the remaining portion of the regular cycle period.
+        if (remaining > 0) {
+            try {
+                Thread.sleep(remaining);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        // Reset the cycle clock for the next pass.
+        period.reset();
+    }
+
+    public void startTicking() {
+        // Reset the cycle clock for the next pass.
+        period.reset();
+    }
+
+    /* local members. */
+    private ElapsedTime period  = new ElapsedTime();
 
 }

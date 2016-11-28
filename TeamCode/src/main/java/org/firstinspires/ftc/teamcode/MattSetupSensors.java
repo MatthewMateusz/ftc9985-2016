@@ -14,16 +14,17 @@ public class MattSetupSensors {
 
     /* Public sensor members. */
     /* Touch Sensor */
-    ModernRoboticsDigitalTouchSensor touchSensorFront = null;
-    ModernRoboticsDigitalTouchSensor touchSensorArm = null;
+    public ModernRoboticsDigitalTouchSensor touchSensorFront = null;
+    public ModernRoboticsDigitalTouchSensor touchSensorArm = null;
 
     //ODS *Addon
-    OpticalDistanceSensor lightSensor = null;
+    public OpticalDistanceSensor lightSensor = null;
 
     //MRColor Sensor *Addon
-    ColorSensor colorSensor = null;
+    public ColorSensor colorSensor = null;
 
-    ModernRoboticsI2cGyro gyroSensor = null;
+    // MRGyro sensor, NOTE: will be set back to NULL if problems with initialization or calibration
+    public ModernRoboticsI2cGyro gyroSensor = null;
 
     /* local members. */
     HardwareMap hwMap =  null;
@@ -42,13 +43,13 @@ public class MattSetupSensors {
         touchSensorFront = (ModernRoboticsDigitalTouchSensor) hwMap.touchSensor.get("touchSensorFront");
         touchSensorArm   = (ModernRoboticsDigitalTouchSensor) hwMap.touchSensor.get("touchSensorArm");
 
-        //Define lightSensor & enbale led
+        //Define lightSensor & enbale its led
         lightSensor = hwMap.opticalDistanceSensor.get("lightSensor");
-        lightSensor.enableLed(true);
+        lightSensor.enableLed(true); // brightness of reflected lioght is measured
 
         // Define ColorSensor & enbale led
-        colorSensor = hwMap.colorSensor.get("colorSensor");
-        colorSensor.enableLed(true);
+        colorSensor = hwMap.colorSensor.get("sensor_color");
+        colorSensor.enableLed(false); // detect the shining light, not reflected
 
         // get a reference to a Modern Robotics GyroSensor object if available
         try {
@@ -58,6 +59,5 @@ public class MattSetupSensors {
             gyroSensor = null;
         }
     }
-
 
 }

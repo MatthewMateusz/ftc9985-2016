@@ -88,64 +88,29 @@ public class PushBotAutoTest extends PushBotAutomation {
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition()); telemetry.update();
 
-        // Display the light level while we are waiting to start
-        while (!isStarted())
-        {
-            telemetry.addData("Light Level",    sensors.lightSensor.getLightDetected());
-            telemetry.addData("Red Level",      sensors.colorSensor.red()   );
-            telemetry.addData("Green Level",    sensors.colorSensor.green() );
-            telemetry.addData("Blue Level",     sensors.colorSensor.blue()  );
-            telemetry.update();
-            idle();
-        }
+        // Try to calibrate the gyro if available and make sure it is calibrated before continuing or disable the gyro
+        calibrateGyroOrFail(10);
+        sensors.colorSensor.enableLed(false);
 
-        telemetry.addData(">", "Robot Ready."); telemetry.update();
+        // Display the sensor levels while we are waiting to start
+        waitForStartAndDisplayWhileWaiting();
+        telemetry.addData(">", "Robot Ready"); telemetry.update();
 
-//      driveDistance(DRIVE_SPEED , -1.0,      SHORT_TIMEOUT)
-//      turnInPlace(TURN_SPEED, -RIGHT_ANGLE,  MEDIUM_TIMEOUT);
-//      driveToWhiteLine(- APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        telemetry.addData("Test", "Started"); telemetry.update();
 
-//      // Callibration:
+//      // Robot actuator constant calibration:
 //      driveDistance(DRIVE_SPEED , 24.0,      LONG_TIMEOUT);
 //      turnInPlace(TURN_SPEED, RIGHT_ANGLE, MEDIUM_TIMEOUT);
 
-//      // Red test
+//      // Driving with sensors tests:
 //      driveToBumper(APPROACH_SPEED, LONG_TIMEOUT);
+//      driveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
 //      pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
 
-        driveDistance(DRIVE_SPEED, 24.0,        MEDIUM_TIMEOUT);
-        driveToBumper(APPROACH_SPEED,           LONG_TIMEOUT);
-        driveDistance(APPROACH_SPEED , -6.0,    MEDIUM_TIMEOUT);
-        turnAndDrag(TURN_SPEED, TURN_LEFT,      MEDIUM_TIMEOUT);
 
-        driveToWhiteLine(-APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
-
-        if (sensors.colorSensor.blue() < sensors.colorSensor.red())
-        {
-            pushButton(ARM_SPEED, SHORT_TIMEOUT);
-        }
-        else
-        {
-            driveDistance(APPROACH_SPEED, -1.0, MEDIUM_TIMEOUT);
-            pushButton(ARM_SPEED, SHORT_TIMEOUT);
-        }
-
-        driveDistance(DRIVE_SPEED, -12.0,       MEDIUM_TIMEOUT);
-        driveToWhiteLine(-APPROACH_SPEED, WHITE_THRESHOLD, MEDIUM_TIMEOUT);
-
-        if (sensors.colorSensor.blue() < sensors.colorSensor.red())
-        {
-            pushButton(ARM_SPEED, SHORT_TIMEOUT);
-        }
-        else
-        {
-            driveDistance(APPROACH_SPEED, -1.0, MEDIUM_TIMEOUT);
-            pushButton(ARM_SPEED, SHORT_TIMEOUT);
-        }
-
-        telemetry.addData("Path", "Complete"); telemetry.update();
+        telemetry.addData("Test", "Complete"); telemetry.update();
     }
 
 
