@@ -122,6 +122,28 @@ public class PushBotAutoTest extends PushBotAutomation {
             }
         }
 
+        if (true) {
+            // testing driving in cyrcles by gyro
+            while (opModeIsActive()) {
+                encoderDriveDistance(SPEED_APPROACH, 12.0,      TOUT_MEDIUM);
+                sleep(500);
+                encoderTurnInPlace(SPEED_TURN, 90.0,            TOUT_MEDIUM);
+                sleep(500);
+                encoderDriveDistance(SPEED_APPROACH, 12.0,      TOUT_MEDIUM);
+                sleep(500);
+                encoderTurnInPlace(SPEED_TURN, -90,             TOUT_MEDIUM);
+                sleep(500);
+                encoderDriveDistance(SPEED_APPROACH, -12.0,     TOUT_MEDIUM);
+                sleep(500);
+                encoderTurnInPlace(SPEED_TURN, -90.0,           TOUT_MEDIUM);
+                sleep(500);
+                encoderDriveDistance(SPEED_APPROACH, 12.0,      TOUT_MEDIUM);
+                sleep(500);
+                encoderTurnInPlace(SPEED_TURN, 90.0,            TOUT_MEDIUM);
+                sleep(500);
+            }
+        }
+
 
 //      gyroDriveDistance(0.0, SPEED_DRIVE, 24.0,   TOUT_MEDIUM);
 //      gyroDriveToBumper(0.0, SPEED_APPROACH,      TOUT_LONG);
@@ -129,7 +151,7 @@ public class PushBotAutoTest extends PushBotAutomation {
 //      gyroTurnInPlace(90.0, SPEED_TURN,           TOUT_MEDIUM);
 //      gyroDriveToWhiteLine(0.0, SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
 
-        if (true) {
+        if (false) {
             // testing driving in cyrcles by gyro
             while (opModeIsActive()) {
                 gyroTurnInPlace(0.0, SPEED_TURN,                TOUT_MEDIUM);
