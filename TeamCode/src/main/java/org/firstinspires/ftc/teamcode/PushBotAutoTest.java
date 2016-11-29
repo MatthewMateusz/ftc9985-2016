@@ -101,52 +101,52 @@ public class PushBotAutoTest extends PushBotAutomation {
         telemetry.addData("Test", "Started"); telemetry.update();
 
 //      // Robot actuator constant calibration:
-//      encoderDriveDistance(DRIVE_SPEED , 24.0,        LONG_TIMEOUT);
-//      encoderTurnInPlace(TURN_SPEED, RIGHT_ANGLE,     MEDIUM_TIMEOUT);
+//      encoderDriveDistance(SPEED_DRIVE , 24.0,        TOUT_LONG);
+//      encoderTurnInPlace(SPEED_TURN, ANGLE_90,        TOUT_MEDIUM);
 
 //      // encoder Driving with sensors tests:
-//      encoderDriveDistance(DRIVE_SPEED , 24.0,        MEDIUM_TIMEOUT);
-//      encoderDriveToBumper(APPROACH_SPEED,            LONG_TIMEOUT);
-//      encoderDriveDistance(DRIVE_SPEED , -2.0,        LONG_TIMEOUT);
-//      encoderDriveToWhiteLine(APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
+//      encoderDriveDistance(SPEED_DRIVE , 24.0,        TOUT_MEDIUM);
+//      encoderDriveToBumper(SPEED_APPROACH,            TOUT_LONG);
+//      encoderDriveDistance(SPEED_DRIVE , -2.0,        TOUT_LONG);
+//      encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
 
-//      pushButton(ARM_SPEED, MEDIUM_TIMEOUT);
+//      pushButton(SPEED_ARM, TOUT_MEDIUM);
 
         if (false) {
             // testing driving in cyrcles by encooder
             while (opModeIsActive()) {
-                encoderTurnInPlace(TURN_SPEED, 40, MEDIUM_TIMEOUT);
+                encoderTurnInPlace(SPEED_TURN, 40.0, TOUT_MEDIUM);
                 sleep(500);
-                encoderDriveDistance(APPROACH_SPEED, 6.0, MEDIUM_TIMEOUT);
+                encoderDriveDistance(SPEED_APPROACH, 6.0, TOUT_MEDIUM);
                 sleep(500);
             }
         }
 
 
-//      gyroDriveDistance(DRIVE_SPEED, 0.0, 24.0, MEDIUM_TIMEOUT);
-//      gyroDriveToBumper(APPROACH_SPEED, 0.0, LONG_TIMEOUT);
-//      gyroDriveDistance(DRIVE_SPEED, 0.0, -2.0, MEDIUM_TIMEOUT);
-//      gyroTurnInPlace(TURN_SPEED, 90.0, MEDIUM_TIMEOUT);
-//      gyroDriveToWhiteLine(APPROACH_SPEED, 0.0, WHITE_THRESHOLD, LONG_TIMEOUT);
+//      gyroDriveDistance(0.0, SPEED_DRIVE, 24.0,   TOUT_MEDIUM);
+//      gyroDriveToBumper(0.0, SPEED_APPROACH,      TOUT_LONG);
+//      gyroDriveDistance(0.0, SPEED_APPROACH, -2.0,TOUT_MEDIUM);
+//      gyroTurnInPlace(90.0, SPEED_TURN,           TOUT_MEDIUM);
+//      gyroDriveToWhiteLine(0.0, SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
 
         if (true) {
             // testing driving in cyrcles by gyro
             while (opModeIsActive()) {
-                gyroTurnInPlace(TURN_SPEED, 0.0, MEDIUM_TIMEOUT);
+                gyroTurnInPlace(0.0, SPEED_TURN,                TOUT_MEDIUM);
                 sleep(500);
-                gyroDriveDistance(DRIVE_SPEED, 0.0, 12.0, MEDIUM_TIMEOUT);
+                gyroDriveDistance(0.0, SPEED_APPROACH, 12.0,    TOUT_MEDIUM);
                 sleep(500);
-                gyroTurnInPlace(TURN_SPEED, 90.0, MEDIUM_TIMEOUT);
+                gyroTurnInPlace(90.0, SPEED_TURN,               TOUT_MEDIUM);
                 sleep(500);
-                gyroDriveDistance(DRIVE_SPEED, 90.0, 12.0, MEDIUM_TIMEOUT);
+                gyroDriveDistance(90.0, SPEED_APPROACH, 12.0,   TOUT_MEDIUM);
                 sleep(500);
-                gyroTurnInPlace(TURN_SPEED, 0.0, MEDIUM_TIMEOUT);
+                gyroTurnInPlace(0.0, SPEED_TURN,                TOUT_MEDIUM);
                 sleep(500);
-                gyroDriveDistance(DRIVE_SPEED, 0.0, -12.0, MEDIUM_TIMEOUT);
+                gyroDriveDistance(0.0, SPEED_APPROACH, -12.0,   TOUT_MEDIUM);
                 sleep(500);
-                gyroTurnInPlace(TURN_SPEED, -90.0, MEDIUM_TIMEOUT);
+                gyroTurnInPlace(-90.0, SPEED_TURN,              TOUT_MEDIUM);
                 sleep(500);
-                gyroDriveDistance(DRIVE_SPEED, -90, 12, MEDIUM_TIMEOUT);
+                gyroDriveDistance(-90, SPEED_APPROACH, 12.0,    TOUT_MEDIUM);
                 sleep(500);
             }
         }
