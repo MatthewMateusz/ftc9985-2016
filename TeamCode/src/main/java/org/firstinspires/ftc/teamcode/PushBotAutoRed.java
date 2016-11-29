@@ -99,37 +99,37 @@ public class PushBotAutoRed extends PushBotAutomation {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        encoderDriveDistance(DRIVE_SPEED, 48.0,        MEDIUM_TIMEOUT);
-        encoderTurnInPlace(TURN_SPEED, TURN_LEFT,      MEDIUM_TIMEOUT);
+        encoderDriveDistance(SPEED_DRIVE, 48.0, TOUT_MEDIUM);
+        encoderTurnInPlace(SPEED_TURN, TURN_LEFT, TOUT_MEDIUM);
 
-        encoderDriveDistance(DRIVE_SPEED, 24.0,        MEDIUM_TIMEOUT);
-        encoderDriveToBumper(APPROACH_SPEED,           LONG_TIMEOUT);
-        encoderDriveDistance(APPROACH_SPEED , -6.0,    MEDIUM_TIMEOUT);
-        encoderTurnAndDrag(TURN_SPEED, TURN_LEFT,      MEDIUM_TIMEOUT);
+        encoderDriveDistance(SPEED_DRIVE, 24.0, TOUT_MEDIUM);
+        encoderDriveToBumper(SPEED_APPROACH, TOUT_LONG);
+        encoderDriveDistance(SPEED_APPROACH, -6.0, TOUT_MEDIUM);
+        encoderTurnAndDrag(SPEED_TURN, TURN_LEFT, TOUT_MEDIUM);
 
-        encoderDriveToWhiteLine(-APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
-
-        if (sensors.colorSensor.blue() < sensors.colorSensor.red())
-        {
-            pushButton(ARM_SPEED, SHORT_TIMEOUT);
-        }
-        else
-        {
-            encoderDriveDistance(APPROACH_SPEED, -1.0, MEDIUM_TIMEOUT);
-            pushButton(ARM_SPEED, SHORT_TIMEOUT);
-        }
-
-        encoderDriveDistance(DRIVE_SPEED, -12.0,       MEDIUM_TIMEOUT);
-        encoderDriveToWhiteLine(-APPROACH_SPEED, WHITE_THRESHOLD, MEDIUM_TIMEOUT);
+        encoderDriveToWhiteLine(-SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
 
         if (sensors.colorSensor.blue() < sensors.colorSensor.red())
         {
-            pushButton(ARM_SPEED, SHORT_TIMEOUT);
+            pushButton(SPEED_ARM, TOUT_SHORT);
         }
         else
         {
-            encoderDriveDistance(APPROACH_SPEED, -1.0, MEDIUM_TIMEOUT);
-            pushButton(ARM_SPEED, SHORT_TIMEOUT);
+            encoderDriveDistance(SPEED_APPROACH, -1.0, TOUT_MEDIUM);
+            pushButton(SPEED_ARM, TOUT_SHORT);
+        }
+
+        encoderDriveDistance(SPEED_DRIVE, -12.0, TOUT_MEDIUM);
+        encoderDriveToWhiteLine(-SPEED_APPROACH, WHITE_THRESHOLD, TOUT_MEDIUM);
+
+        if (sensors.colorSensor.blue() < sensors.colorSensor.red())
+        {
+            pushButton(SPEED_ARM, TOUT_SHORT);
+        }
+        else
+        {
+            encoderDriveDistance(SPEED_APPROACH, -1.0, TOUT_MEDIUM);
+            pushButton(SPEED_ARM, TOUT_SHORT);
         }
 
         // sleep(1000);  // pause is needed only in case the last command pertained to servo motors

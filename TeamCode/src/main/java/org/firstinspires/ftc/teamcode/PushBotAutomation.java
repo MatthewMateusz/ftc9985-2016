@@ -15,26 +15,26 @@ abstract public class PushBotAutomation extends LinearOpMode {
 
 
     /* Declare OpMode constants for users */
-    public static final double     FULL_SPEED       = 1.0;
-    public static final double     DRIVE_SPEED      = 0.75;
-    public static final double     APPROACH_SPEED   = 0.5;
+    public static final double  SPEED_FULL      = 1.0;
+    public static final double  SPEED_DRIVE     = 0.75;
+    public static final double  SPEED_APPROACH  = 0.5;
 
-    public static final double     TURN_SPEED       = 0.5;
-    public static final double     RIGHT_ANGLE      = 90.0;
-    public static final double     TURN_LEFT        = -RIGHT_ANGLE;
-    public static final double     TURN_RIGHT       = RIGHT_ANGLE;
-    public static final double     WHITE_THRESHOLD  = 0.6;  // background spans between 0.1 - 0.5 from dark to light
+    public static final double  SPEED_TURN      = 0.5;
+    public static final double  ANGLE_90        = 90.0;
+    public static final double  TURN_LEFT       = -ANGLE_90;
+    public static final double  TURN_RIGHT      = ANGLE_90;
+    public static final double  WHITE_THRESHOLD = 0.6;  // background spans between 0.1 - 0.5 from dark to light
 
-    public static final double     ARM_SPEED        = 0.1;
+    public static final double  SPEED_ARM       = 0.1;
+    public static final double  TOUT_ARM        = 5;
 
-    public static final double     SHORT_TIMEOUT    = 3;
-    public static final double     MEDIUM_TIMEOUT   = 5;
-    public static final double     LONG_TIMEOUT     = 10;
+    public static final double  TOUT_SHORT      = 3;
+    public static final double  TOUT_MEDIUM     = 5;
+    public static final double  TOUT_LONG       = 10;
 
     /* Declare OpMode data members */
     MattSetupActuators robot   = new MattSetupActuators();  // Use Pushbot's actuators
-    MattSetupSensors   sensors = new MattSetupSensors();  // Use Pushbot's sensors
-
+    MattSetupSensors   sensors = new MattSetupSensors();    // Use Pushbot's sensors
     /* Timeout variable */
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -77,12 +77,6 @@ abstract public class PushBotAutomation extends LinearOpMode {
         }
     }
 
-    public void gyroResetHeading() {
-        telemetry.addData("Status", "gyroResetHeading");
-        telemetry.update();
-        if (sensors.gyroSensor!=null) sensors.gyroSensor.resetZAxisIntegrator();
-    }
-
     // Display the sensor levels while we are waiting to start
     public void waitForStartAndDisplayWhileWaiting() {
         while (!isStarted()) {
@@ -103,6 +97,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
         robot.rightMotor.setPower(0);
         robot.armMotor.setPower(0);
     }
+
 
     public void encoderReset() {
         telemetry.addData("Status", "encoderReset");
@@ -217,7 +212,6 @@ abstract public class PushBotAutomation extends LinearOpMode {
     }
 
 
-
     /*
      *  Method to perfmorm a relative move, based on encoder counts.
      *  Encoders are not reset as the move is based on the current position.
@@ -273,42 +267,19 @@ abstract public class PushBotAutomation extends LinearOpMode {
         }
     }
 
-    /***
-     *
-     * waitForTick implements a periodic delay. However, this acts like a metronome with a regular
-     * periodic tick.  This is used to compensate for varying processing times for each cycle.
-     * The function looks at the elapsed cycle time, and sleeps for the remaining time interval.
-     *
-     * @param periodMs  Length of wait cycle in mSec.
-     */
-    public void waitForTick(long periodMs) {
-        long remaining = periodMs - (long)period.milliseconds();
-        // sleep for the remaining portion of the regular cycle period.
-        if (remaining > 0) {
-            try {
-                Thread.sleep(remaining);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-        // Reset the cycle clock for the next pass.
-        period.reset();
-    }
-
-    public void startTicking() {
-        // Reset the cycle clock for the next pass.
-        period.reset();
-    }
-
-    /* local members. */
-    private ElapsedTime period  = new ElapsedTime();
-
 
 
     /* Declare OpMode members. */
     private static final double     HEADING_THRESHOLD       = 1 ;       // As tight as we can make it with an integer gyro
     private static final double     P_TURN_COEFF            = 0.1;      // Larger is more responsive, but also less stable
     private static final double     P_DRIVE_COEFF           = 0.05;     // Larger is more responsive, but also less stable
+
+
+    public void gyroResetHeading() {
+        telemetry.addData("Status", "gyroResetHeading");
+        telemetry.update();
+        if (sensors.gyroSensor!=null) sensors.gyroSensor.resetZAxisIntegrator();
+    }
 
 
     /**
@@ -322,7 +293,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
      *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *                   If a relative heading is required, add/subtract from current heading.
      */
-    public void gyroTurnInPlace(double speed, double heading, double timeoutS) {
+    public void gyroTurnInPlace(double heading, double speed, double timeoutS) {
         if (sensors.gyroSensor==null) {
             // scale back to encoder drive
             encoderTurnInPlace(speed, (heading-oldheading), timeoutS);
@@ -330,7 +301,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
         } else {
             runtime.reset(); // reset the timeout time and start motion.
             // keep looping while we are still active, and not on heading.
-            while (opModeIsActive() && !gyroOneStepTurn(speed, heading, P_TURN_COEFF) && (runtime.seconds() < timeoutS)) {
+            while (opModeIsActive() && !gyroOneStepTurn(heading, speed, P_TURN_COEFF) && (runtime.seconds() < timeoutS)) {
                 // Update telemetry & Allow time for other processes to run.
                 telemetry.update();
                 idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
@@ -352,7 +323,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
      *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *                   If a relative heading is required, add/subtract from current heading.
      */
-    public void gyroDriveDistance(double speed, double heading, double distance, double timeoutS) {
+    public void gyroDriveDistance(double heading, double speed, double distance, double timeoutS) {
         if (sensors.gyroSensor==null) {
             // scale back to encoder drive
             encoderDriveDistance(speed, distance, timeoutS);
@@ -447,7 +418,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
      *                   If a relative heading is required, add/subtract from current heading.
      * @param timeoutS   Length of time (in seconds) to hold the specified heading.
      */
-    public void gyroDriveTime(double speed, double heading, double timeoutS) {
+    public void gyroDriveTime(double heading, double speed, double timeoutS) {
         if (sensors.gyroSensor==null) {
             // scale back to encoder drive
             encoderDriveTime(speed, timeoutS);
@@ -456,7 +427,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
             runtime.reset();
             while (opModeIsActive() && (runtime.seconds() < timeoutS)) {
                 // Update telemetry & Allow time for other processes to run.
-                gyroOneStepDrive(speed, heading, P_DRIVE_COEFF);
+                gyroOneStepDrive(heading, speed, P_DRIVE_COEFF);
                 telemetry.update();
                 idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
             }
@@ -466,7 +437,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
         }
     }
 
-    public void gyroDriveToBumper(double speed, double heading, double timeoutS) {
+    public void gyroDriveToBumper(double heading, double speed, double timeoutS) {
         if (sensors.gyroSensor==null) {
             // scale back to encoder drive
             encoderDriveToBumper(speed, timeoutS);
@@ -475,7 +446,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
             runtime.reset();
             while (opModeIsActive() && (sensors.touchSensorFront.isPressed()== false) && (runtime.seconds() < timeoutS)) {
                 // Update telemetry & Allow time for other processes to run.
-                gyroOneStepDrive(speed, heading, P_DRIVE_COEFF);
+                gyroOneStepDrive(heading, speed, P_DRIVE_COEFF);
                 telemetry.update();
                 idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
             }
@@ -485,7 +456,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
         }
     }
 
-    public void gyroDriveToWhiteLine(double speed, double heading, double lightThreshold, double timeoutS) {
+    public void gyroDriveToWhiteLine(double heading, double speed, double lightThreshold, double timeoutS) {
         if (sensors.gyroSensor==null) {
             // scale back to encoder drive
             encoderDriveToWhiteLine(speed, lightThreshold, timeoutS);
@@ -494,7 +465,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
             runtime.reset();
             while (opModeIsActive() && (sensors.lightSensor.getLightDetected() < lightThreshold) && (runtime.seconds() < timeoutS)) {
                 // Update telemetry & Allow time for other processes to run.
-                gyroOneStepDrive(speed, heading, P_DRIVE_COEFF);
+                gyroOneStepDrive(heading, speed, P_DRIVE_COEFF);
                 telemetry.addData("Light Level",  sensors.lightSensor.getLightDetected());
                 telemetry.update();
                 idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
@@ -517,7 +488,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
      * @param PCoeff    Proportional Gain coefficient
      * @return
      */
-    private boolean gyroOneStepTurn(double speed, double heading, double PCoeff) {
+    private boolean gyroOneStepTurn(double heading, double speed, double PCoeff) {
         double   error ;
         double   steer ;
         boolean  onTarget = false ;
@@ -562,7 +533,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
      * @param PCoeff    Proportional Gain coefficient
      * @return
      */
-    private void gyroOneStepDrive(double speed, double heading, double PCoeff) {
+    private void gyroOneStepDrive(double heading, double speed, double PCoeff) {
         double  error ;
         double  steer ;
         double  max;
