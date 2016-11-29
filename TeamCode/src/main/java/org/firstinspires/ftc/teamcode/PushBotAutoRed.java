@@ -84,7 +84,7 @@ public class PushBotAutoRed extends PushBotAutomation {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");  telemetry.update();
-        resetEncoders();
+        encoderReset();
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition()); telemetry.update();
 
@@ -99,28 +99,15 @@ public class PushBotAutoRed extends PushBotAutomation {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveDistance(DRIVE_SPEED, 48.0,        MEDIUM_TIMEOUT);
-        turnInPlace(TURN_SPEED, TURN_LEFT,      MEDIUM_TIMEOUT);
+        encoderDriveDistance(DRIVE_SPEED, 48.0,        MEDIUM_TIMEOUT);
+        encoderTurnInPlace(TURN_SPEED, TURN_LEFT,      MEDIUM_TIMEOUT);
 
-        driveDistance(DRIVE_SPEED, 24.0,        MEDIUM_TIMEOUT);
-        driveToBumper(APPROACH_SPEED,           LONG_TIMEOUT);
-        driveDistance(APPROACH_SPEED , -6.0,    MEDIUM_TIMEOUT);
-        turnAndDrag(TURN_SPEED, TURN_LEFT,      MEDIUM_TIMEOUT);
+        encoderDriveDistance(DRIVE_SPEED, 24.0,        MEDIUM_TIMEOUT);
+        encoderDriveToBumper(APPROACH_SPEED,           LONG_TIMEOUT);
+        encoderDriveDistance(APPROACH_SPEED , -6.0,    MEDIUM_TIMEOUT);
+        encoderTurnAndDrag(TURN_SPEED, TURN_LEFT,      MEDIUM_TIMEOUT);
 
-        driveToWhiteLine(-APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
-
-        if (sensors.colorSensor.blue() < sensors.colorSensor.red())
-        {
-            pushButton(ARM_SPEED, SHORT_TIMEOUT);
-        }
-        else
-        {
-            driveDistance(APPROACH_SPEED, -1.0, MEDIUM_TIMEOUT);
-            pushButton(ARM_SPEED, SHORT_TIMEOUT);
-        }
-
-        driveDistance(DRIVE_SPEED, -12.0,       MEDIUM_TIMEOUT);
-        driveToWhiteLine(-APPROACH_SPEED, WHITE_THRESHOLD, MEDIUM_TIMEOUT);
+        encoderDriveToWhiteLine(-APPROACH_SPEED, WHITE_THRESHOLD, LONG_TIMEOUT);
 
         if (sensors.colorSensor.blue() < sensors.colorSensor.red())
         {
@@ -128,7 +115,20 @@ public class PushBotAutoRed extends PushBotAutomation {
         }
         else
         {
-            driveDistance(APPROACH_SPEED, -1.0, MEDIUM_TIMEOUT);
+            encoderDriveDistance(APPROACH_SPEED, -1.0, MEDIUM_TIMEOUT);
+            pushButton(ARM_SPEED, SHORT_TIMEOUT);
+        }
+
+        encoderDriveDistance(DRIVE_SPEED, -12.0,       MEDIUM_TIMEOUT);
+        encoderDriveToWhiteLine(-APPROACH_SPEED, WHITE_THRESHOLD, MEDIUM_TIMEOUT);
+
+        if (sensors.colorSensor.blue() < sensors.colorSensor.red())
+        {
+            pushButton(ARM_SPEED, SHORT_TIMEOUT);
+        }
+        else
+        {
+            encoderDriveDistance(APPROACH_SPEED, -1.0, MEDIUM_TIMEOUT);
             pushButton(ARM_SPEED, SHORT_TIMEOUT);
         }
 

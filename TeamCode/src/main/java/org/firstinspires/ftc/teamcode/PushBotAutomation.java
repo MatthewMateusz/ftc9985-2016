@@ -34,7 +34,8 @@ abstract public class PushBotAutomation extends LinearOpMode {
     /* Declare OpMode data members */
     MattSetupActuators robot   = new MattSetupActuators();  // Use Pushbot's actuators
     MattSetupSensors   sensors = new MattSetupSensors();  // Use Pushbot's sensors
-    // use the classes above that was created to define a Pushbot's hardware
+
+    /* Timeout variable */
     private ElapsedTime runtime = new ElapsedTime();
 
     public void setupHardware() {
@@ -42,18 +43,21 @@ abstract public class PushBotAutomation extends LinearOpMode {
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
-        telemetry.addData("Status", "Init Auto One");    //
+        telemetry.addData("Status", "Init Automation");
+        telemetry.addData("Status", "Init Mat Actuators");
         telemetry.update();
-        telemetry.addData("Status", "Init Mat Actuators");    //
         robot.init(hardwareMap);
-        telemetry.addData("Status", "Init Mat Sensors");    //
+        telemetry.addData("Status", "Init Automation");
+        telemetry.addData("Status", "Init Mat Sensors");
         sensors.init(hardwareMap);
-        telemetry.addData("Status", "Init Complete");    //
+        telemetry.addData("Status", "Init Automation Done");
+        telemetry.update();
     }
 
     public void calibrateGyroOrFail(double timeoutS) {
         if (sensors.gyroSensor!=null) {
-            telemetry.addData("Status", "Calibrating gyro for up to "+timeoutS);  telemetry.update();
+            telemetry.addData("Status", "calibrateGyroOrFail in "+timeoutS);
+            telemetry.update();
             try {
                 runtime.reset(); // reset the timeout time and start motion.
                 sensors.gyroSensor.calibrate();
@@ -63,12 +67,20 @@ abstract public class PushBotAutomation extends LinearOpMode {
                     sensors.colorSensor.enableLed(flash_color_led); flash_color_led=!flash_color_led;
                     sleep(100);
                 }
-                telemetry.addData("Status", "Gyro calibration done");  telemetry.update();
+                telemetry.addData("Status", "calibrateGyroOrFail Done");
+                telemetry.update();
             } catch (Exception e) {
                 sensors.gyroSensor=null;
-                telemetry.addData("Status", "Gyro calibration failed");  telemetry.update();
+                telemetry.addData("Status", "calibrateGyroOrFail Failed");
+                telemetry.update();
             }
         }
+    }
+
+    public void gyroResetHeading() {
+        telemetry.addData("Status", "gyroResetHeading");
+        telemetry.update();
+        if (sensors.gyroSensor!=null) sensors.gyroSensor.resetZAxisIntegrator();
     }
 
     // Display the sensor levels while we are waiting to start
@@ -84,8 +96,17 @@ abstract public class PushBotAutomation extends LinearOpMode {
         }
     }
 
-    public void resetEncoders() {
-        telemetry.addData("Status", "resetEncoders");  telemetry.update();
+    public void fullStop() {
+        telemetry.addData("Status", "fullStop");
+        telemetry.update();
+        robot.leftMotor.setPower(0);
+        robot.rightMotor.setPower(0);
+        robot.armMotor.setPower(0);
+    }
+
+    public void encoderReset() {
+        telemetry.addData("Status", "encoderReset");
+        telemetry.update();
         robot.leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         idle();
@@ -93,15 +114,9 @@ abstract public class PushBotAutomation extends LinearOpMode {
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void fullStop() {
-        telemetry.addData("Status", "fullStop");  telemetry.update();
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
-        robot.armMotor.setPower(0);
-    }
-
-    public void turnInPlace(double speed, double degrees, double timeoutS) {
-        telemetry.addData("Status", "turnInPlace");  telemetry.update();
+    public void encoderTurnInPlace(double speed, double degrees, double timeoutS) {
+        telemetry.addData("Status", "encoderTurnInPlace");
+        telemetry.update();
         if ( speed<0.0 ) {
             // speed for the encoderDrive(...) must be always positive!
             speed=-speed;
@@ -110,8 +125,9 @@ abstract public class PushBotAutomation extends LinearOpMode {
         encoderDrive(speed, degrees* MattSetupActuators.INCHES_PER_ANGLE_INPLACE, -degrees* MattSetupActuators.INCHES_PER_ANGLE_INPLACE, timeoutS);
     }
 
-    public void turnAndDrag(double speed, double degrees, double timeoutS) {
-        telemetry.addData("Status", "turnAndDrag");  telemetry.update();
+    public void encoderTurnAndDrag(double speed, double degrees, double timeoutS) {
+        telemetry.addData("Status", "encoderTurnAndDrag");
+        telemetry.update();
         if ( speed<0.0 ) {
             // speed for the encoderDrive(...) must be always positive!
             speed=-speed;
@@ -124,8 +140,9 @@ abstract public class PushBotAutomation extends LinearOpMode {
         }
     }
 
-    public void driveDistance(double speed, double distance, double timeoutS) {
-        telemetry.addData("Status", "driveDistance");  telemetry.update();
+    public void encoderDriveDistance(double speed, double distance, double timeoutS) {
+        telemetry.addData("Status", "encoderDriveDistance");
+        telemetry.update();
         if ( speed<0.0 ) {
             // speed for the encoderDrive(...) must be always positive!
             speed=-speed;
@@ -134,28 +151,44 @@ abstract public class PushBotAutomation extends LinearOpMode {
         encoderDrive(speed, distance, distance, timeoutS);
     }
 
-    public void driveToBumper(double speed, double timeoutS) {
-        telemetry.addData("Status", "driveToBumper");  telemetry.update();
+    public void encoderDriveTime(double speed, double timeoutS) {
+        telemetry.addData("Status", "encoderDriveTime for " + timeoutS);
+        telemetry.update();
         runtime.reset(); // reset the timeout time and start motion.
         robot.leftMotor.setPower(speed);
         robot.rightMotor.setPower(speed);
-        while ( opModeIsActive() && (runtime.seconds() < timeoutS) && (sensors.touchSensorFront.isPressed()== false) )
+        while ( opModeIsActive() && (runtime.seconds() < timeoutS) )
         {
-            telemetry.update();
             idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
         robot.leftMotor.setPower(0);
         robot.rightMotor.setPower(0);
     }
 
-    public void driveToWhiteLine(double speed, double lightThreshold, double timeoutS) {
-        telemetry.addData("Status", "driveToColor");  telemetry.update();
+    public void encoderDriveToBumper(double speed, double timeoutS) {
+        telemetry.addData("Status", "encoderDriveToBumper");
+        telemetry.update();
+        runtime.reset(); // reset the timeout time and start motion.
+        robot.leftMotor.setPower(speed);
+        robot.rightMotor.setPower(speed);
+        while ( opModeIsActive() && (sensors.touchSensorFront.isPressed()== false) && (runtime.seconds() < timeoutS) )
+        {
+            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+        }
+        robot.leftMotor.setPower(0);
+        robot.rightMotor.setPower(0);
+    }
+
+    public void encoderDriveToWhiteLine(double speed, double lightThreshold, double timeoutS) {
+        telemetry.addData("Status", "encoderDriveToWhiteLine");
+        telemetry.update();
         runtime.reset(); // reset the timeout time and start motion.
         robot.leftMotor.setPower(speed);
         robot.rightMotor.setPower(speed);
         // Display the light level while we are looking for the line
-        while ( opModeIsActive() && (runtime.seconds() < timeoutS) && (sensors.lightSensor.getLightDetected() < lightThreshold) )
+        while ( opModeIsActive() && (sensors.lightSensor.getLightDetected() < lightThreshold) && (runtime.seconds() < timeoutS) )
         {
+            telemetry.addData("Status", "encoderDriveToWhiteLine");
             telemetry.addData("Light Level",  sensors.lightSensor.getLightDetected());
             telemetry.update();
             idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
@@ -164,8 +197,10 @@ abstract public class PushBotAutomation extends LinearOpMode {
         robot.rightMotor.setPower(0);
     }
 
+
     public void pushButton(double speed, double timeoutS) {
-        telemetry.addData("Status", "pushButton");  telemetry.update();
+        telemetry.addData("Status", "pushButton");
+        telemetry.update();
         if (speed<0.0) speed=-speed; // we control the direction internally
         runtime.reset(); // reset the timeout time and start motion.
         robot.armMotor.setPower(-speed);
@@ -220,10 +255,10 @@ abstract public class PushBotAutomation extends LinearOpMode {
                     ) {
 
                 // Display it for the driver.
+                telemetry.addData("Status", "encoderDrive");
                 telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
                 telemetry.addData("Path2",  "Running at %7d :%7d",
-                        robot.leftMotor.getCurrentPosition(),
-                        robot.rightMotor.getCurrentPosition());
+                        robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition());
                 telemetry.update();
                 idle();
             }
@@ -247,9 +282,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
      * @param periodMs  Length of wait cycle in mSec.
      */
     public void waitForTick(long periodMs) {
-
-        long  remaining = periodMs - (long)period.milliseconds();
-
+        long remaining = periodMs - (long)period.milliseconds();
         // sleep for the remaining portion of the regular cycle period.
         if (remaining > 0) {
             try {
@@ -258,7 +291,6 @@ abstract public class PushBotAutomation extends LinearOpMode {
                 Thread.currentThread().interrupt();
             }
         }
-
         // Reset the cycle clock for the next pass.
         period.reset();
     }
@@ -274,24 +306,63 @@ abstract public class PushBotAutomation extends LinearOpMode {
 
 
     /* Declare OpMode members. */
-    static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
-    static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
-    static final double     P_DRIVE_COEFF           = 0.15;     // Larger is more responsive, but also less stable
+    private static final double     HEADING_THRESHOLD       = 1 ;       // As tight as we can make it with an integer gyro
+    private static final double     P_TURN_COEFF            = 0.1;      // Larger is more responsive, but also less stable
+    private static final double     P_DRIVE_COEFF           = 0.05;     // Larger is more responsive, but also less stable
 
 
     /**
-     *  Method to drive on a fixed compass bearing (angle), based on encoder counts.
+     *  Method to spin on central axis to point in a new direction.
+     *  Move will stop if either of these conditions occur:
+     *  1) Move gets to the heading (heading)
+     *  2) Driver stops the opmode running.
+     *
+     * @param speed Desired speed of turn.
+     * @param heading      Absolute Angle (in Degrees) relative to last gyro reset.
+     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                   If a relative heading is required, add/subtract from current heading.
+     */
+    public void gyroTurnInPlace(double speed, double heading, double timeoutS) {
+        if (sensors.gyroSensor==null) {
+            // scale back to encoder drive
+            encoderTurnInPlace(speed, (heading-oldheading), timeoutS);
+            oldheading = heading;
+        } else {
+            runtime.reset(); // reset the timeout time and start motion.
+            // keep looping while we are still active, and not on heading.
+            while (opModeIsActive() && !gyroOneStepTurn(speed, heading, P_TURN_COEFF) && (runtime.seconds() < timeoutS)) {
+                // Update telemetry & Allow time for other processes to run.
+                telemetry.update();
+                idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+            }
+        }
+    }
+    /* variable to */
+    private double oldheading = 0.0;
+
+    /**
+     *  Method to drive on a fixed compass bearing (heading), based on encoder counts.
      *  Move will stop if either of these conditions occur:
      *  1) Move gets to the desired position
      *  2) Driver stops the opmode running.
      *
      * @param speed      Target speed for forward motion.  Should allow for _/- variance for adjusting heading
      * @param distance   Distance (in inches) to move from current position.  Negative distance means move backwards.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
+     * @param heading      Absolute Angle (in Degrees) relative to last gyro reset.
      *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
+     *                   If a relative heading is required, add/subtract from current heading.
      */
-    private void gyroDrive ( double speed, double distance, double angle, double timeoutS) {
+    public void gyroDriveDistance(double speed, double heading, double distance, double timeoutS) {
+        if (sensors.gyroSensor==null) {
+            // scale back to encoder drive
+            encoderDriveDistance(speed, distance, timeoutS);
+            return;
+        } // else the reminder of this function
+
+        if (speed<0.0) {
+            speed = -speed;
+            distance = -distance;
+        }
 
         int     newLeftTarget;
         int     newRightTarget;
@@ -327,12 +398,11 @@ abstract public class PushBotAutomation extends LinearOpMode {
             while (opModeIsActive() && (runtime.seconds() < timeoutS) &&  (robot.leftMotor.isBusy() || robot.rightMotor.isBusy())) {
 
                 // adjust relative speed based on heading error.
-                error = getError(angle);
-                steer = getSteer(error, P_DRIVE_COEFF);
+                error = gyroHeadingError(heading);
+                steer = gyroComputeSteer(error, P_DRIVE_COEFF);
 
                 // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    steer *= -1.0;
+                if (distance < 0) steer *= -1.0;
 
                 leftSpeed = speed - steer;
                 rightSpeed = speed + steer;
@@ -368,65 +438,86 @@ abstract public class PushBotAutomation extends LinearOpMode {
     }
 
     /**
-     *  Method to spin on central axis to point in a new direction.
-     *  Move will stop if either of these conditions occur:
-     *  1) Move gets to the heading (angle)
-     *  2) Driver stops the opmode running.
-     *
-     * @param speed Desired speed of turn.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
-     */
-    private void gyroTurn (  double speed, double angle, double timeoutS) {
-        runtime.reset(); // reset the timeout time and start motion.
-        // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF) && (runtime.seconds() < timeoutS)) {
-            // Update telemetry & Allow time for other processes to run.
-            telemetry.update();
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
-        }
-    }
-
-    /**
      *  Method to obtain & hold a heading for a finite amount of time
      *  Move will stop once the requested time has elapsed
      *
      * @param speed      Desired speed of turn.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
+     * @param heading      Absolute Angle (in Degrees) relative to last gyro reset.
      *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
-     * @param holdTime   Length of time (in seconds) to hold the specified heading.
+     *                   If a relative heading is required, add/subtract from current heading.
+     * @param timeoutS   Length of time (in seconds) to hold the specified heading.
      */
-    private void gyroHold( double speed, double angle, double holdTime) {
+    public void gyroDriveTime(double speed, double heading, double timeoutS) {
+        if (sensors.gyroSensor==null) {
+            // scale back to encoder drive
+            encoderDriveTime(speed, timeoutS);
+        } else {
+            // reset the timeout time and start motion.
+            runtime.reset();
+            while (opModeIsActive() && (runtime.seconds() < timeoutS)) {
+                // Update telemetry & Allow time for other processes to run.
+                gyroOneStepDrive(speed, heading, P_DRIVE_COEFF);
+                telemetry.update();
+                idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+            }
+            // Stop all motion;
+            robot.leftMotor.setPower(0);
+            robot.rightMotor.setPower(0);
+        }
+    }
 
-        ElapsedTime holdTimer = new ElapsedTime();
+    public void gyroDriveToBumper(double speed, double heading, double timeoutS) {
+        if (sensors.gyroSensor==null) {
+            // scale back to encoder drive
+            encoderDriveToBumper(speed, timeoutS);
+        } else {
+            // reset the timeout time and start motion.
+            runtime.reset();
+            while (opModeIsActive() && (sensors.touchSensorFront.isPressed()== false) && (runtime.seconds() < timeoutS)) {
+                // Update telemetry & Allow time for other processes to run.
+                gyroOneStepDrive(speed, heading, P_DRIVE_COEFF);
+                telemetry.update();
+                idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+            }
+            // Stop all motion;
+            robot.leftMotor.setPower(0);
+            robot.rightMotor.setPower(0);
+        }
+    }
 
-        // keep looping while we have time remaining.
-        holdTimer.reset();
-        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
-            // Update telemetry & Allow time for other processes to run.
-            onHeading(speed, angle, P_TURN_COEFF);
-            telemetry.update();
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+    public void gyroDriveToWhiteLine(double speed, double heading, double lightThreshold, double timeoutS) {
+        if (sensors.gyroSensor==null) {
+            // scale back to encoder drive
+            encoderDriveToWhiteLine(speed, lightThreshold, timeoutS);
+        } else {
+            // reset the timeout time and start motion.
+            runtime.reset();
+            while (opModeIsActive() && (sensors.lightSensor.getLightDetected() < lightThreshold) && (runtime.seconds() < timeoutS)) {
+                // Update telemetry & Allow time for other processes to run.
+                gyroOneStepDrive(speed, heading, P_DRIVE_COEFF);
+                telemetry.addData("Light Level",  sensors.lightSensor.getLightDetected());
+                telemetry.update();
+                idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+            }
+            // Stop all motion;
+            robot.leftMotor.setPower(0);
+            robot.rightMotor.setPower(0);
         }
 
-        // Stop all motion;
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
+
     }
 
     /**
      * Perform one cycle of closed loop heading control.
      *
      * @param speed     Desired speed of turn.
-     * @param angle     Absolute Angle (in Degrees) relative to last gyro reset.
+     * @param heading     Absolute Angle (in Degrees) relative to last gyro reset.
      *                  0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                  If a relative angle is required, add/subtract from current heading.
+     *                  If a relative heading is required, add/subtract from current heading.
      * @param PCoeff    Proportional Gain coefficient
      * @return
      */
-    private boolean onHeading(double speed, double angle, double PCoeff) {
+    private boolean gyroOneStepTurn(double speed, double heading, double PCoeff) {
         double   error ;
         double   steer ;
         boolean  onTarget = false ;
@@ -434,7 +525,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
         double rightSpeed;
 
         // determine turn power based on +/- error
-        error = getError(angle);
+        error = gyroHeadingError(heading);
 
         if (Math.abs(error) <= HEADING_THRESHOLD) {
             steer = 0.0;
@@ -443,7 +534,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
             onTarget = true;
         }
         else {
-            steer = getSteer(error, PCoeff);
+            steer = gyroComputeSteer(error, PCoeff);
             rightSpeed  = speed * steer;
             leftSpeed   = -rightSpeed;
         }
@@ -453,20 +544,65 @@ abstract public class PushBotAutomation extends LinearOpMode {
         robot.rightMotor.setPower(rightSpeed);
 
         // Display it for the driver.
-        telemetry.addData("Target", "%5.2f", angle);
+        telemetry.addData("Target", "%5.2f", heading);
         telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
         telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
 
         return onTarget;
     }
 
+
     /**
-     * getError determines the error between the target angle and the robot's current heading
+     * Perform one cycle of closed loop heading control for driving (not turning)
+     *
+     * @param speed     Desired speed of turn.
+     * @param heading   Absolute Angle (in Degrees) relative to last gyro reset.
+     *                  0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                  If a relative heading is required, add/subtract from current heading.
+     * @param PCoeff    Proportional Gain coefficient
+     * @return
+     */
+    private void gyroOneStepDrive(double speed, double heading, double PCoeff) {
+        double  error ;
+        double  steer ;
+        double  max;
+        double  leftSpeed;
+        double  rightSpeed;
+
+        // adjust relative speed based on heading error.
+        error = gyroHeadingError(heading);
+        steer = gyroComputeSteer(error, P_DRIVE_COEFF);
+
+        // if driving in reverse, the motor correction also needs to be reversed
+        if (speed < 0) steer *= -1.0;
+
+        leftSpeed = speed - steer;
+        rightSpeed = speed + steer;
+
+        // Normalize speeds if any one exceeds +/- 1.0;
+        max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+        if (max > 1.0)
+        {
+            leftSpeed /= max;
+            rightSpeed /= max;
+        }
+
+        robot.leftMotor.setPower(leftSpeed);
+        robot.rightMotor.setPower(rightSpeed);
+
+        // Display it for the driver.
+        telemetry.addData("Target", "%5.2f", heading);
+        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+    }
+
+    /**
+     * gyroHeadingError determines the error between the target angle and the robot's current heading
      * @param   targetAngle  Desired angle (relative to global reference established at last Gyro Reset).
      * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
      *          +ve error means the robot should turn LEFT (CCW) to reduce error.
      */
-    private double getError(double targetAngle) {
+    private double gyroHeadingError(double targetAngle) {
 
         double robotError;
 
@@ -483,7 +619,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
      * @param PCoeff  Proportional Gain Coefficient
      * @return
      */
-    private double getSteer(double error, double PCoeff) {
+    private double gyroComputeSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1, 1);
     }
 
