@@ -67,6 +67,7 @@ public class ConceptRegisterOpModes
     // Or add your own lines to register your Team opmodes.
 
     manager.register("Teleoperation" ,        TelopDrive.class);
+    manager.register("Autonomous Ball" ,      PushBotAutoBall.class);
     manager.register("Autonomous Blue Gyro" , PushBotAutoBlueGyro.class);
     manager.register("Autonomous Blue" ,      PushBotAutoBlue.class);
     manager.register("Autonomous Red" ,       PushBotAutoRed.class);

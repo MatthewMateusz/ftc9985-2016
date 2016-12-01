@@ -56,7 +56,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class TelopDrive extends OpMode{
 
     /* Declare OpMode members. */
-    private MattSetupActuators robot              = new MattSetupActuators();   // Use Pushbot's actuators
+    private MattSetupActuators robot            = new MattSetupActuators(); // Use Pushbot's actuators
+    private MattSetupSensors sensors            = new MattSetupSensors();   // Use Pushbot's sensors
     // use the class above that was created to define a Pushbot's hardware
 //  private double              clawOffset      = 0.0 ;                     // Servo mid position
 
@@ -73,6 +74,7 @@ public class TelopDrive extends OpMode{
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
+        sensors.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Hello Driver");    //
@@ -103,16 +105,22 @@ public class TelopDrive extends OpMode{
         double middle = -gamepad2.left_stick_y;
         // Use gamepad buttons to move the arm up (Y) and down (A)
         if (Math.abs(middle)<0.1 ) {
-            if (gamepad1.y)
+            if (gamepad1.y) {
                 middle = ARM_UP_POWER;
-            else if (gamepad1.a)
+            } else if (gamepad1.a) {
                 middle = ARM_DOWN_POWER;
-            else
+            } else {
                 robot.armMotor.setPower(0.0);
+            }
         }
 
         robot.leftMotor.setPower(left);
         robot.rightMotor.setPower(right);
+
+        // Limit arm movement at end postions or when pushed enough
+        if (  ( (middle<0) && (sensors.touchSensorArmPush.isPressed()== true) )
+            ||( (middle>0) && (sensors.touchSensorArmIn.isPressed()== true) ) )
+            middle=0;
         robot.armMotor.setPower(middle);
 
 
