@@ -79,15 +79,13 @@ public class PushBotAutoBall extends PushBotAutomation {
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
 
-        // get a reference to the RelativeLayout so we can change the background
-        // color of the Robot Controller app to match the hue detected by the RGB sensor.
-        final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(com.qualcomm.ftcrobotcontroller.R.id.RelativeLayout);
-
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");  telemetry.update();
+        telemetry.addData("Status", "Resetting Encoders");
+        telemetry.update();
         encoderReset();
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition()); telemetry.update();
+        telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition());
+        telemetry.update();
 
         // Try to calibrate the gyro if available and make sure it is calibrated before continuing or disable the gyro
         calibrateGyroOrFail(10);
@@ -95,15 +93,13 @@ public class PushBotAutoBall extends PushBotAutomation {
 
         // Display the sensor levels while we are waiting to start
         waitForStartAndDisplayWhileWaiting();
-        telemetry.addData(">", "Robot Ready"); telemetry.update();
+        telemetry.addData("Ball", "Started");
+        telemetry.update();
 
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-        telemetry.addData("Test", "Started"); telemetry.update();
+        encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
 
-        gyroDriveToWhiteLine(0.0, SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
-
-        telemetry.addData("Test", "Complete"); telemetry.update();
+        telemetry.addData("Ball", "Complete");
+        telemetry.update();
     }
 
 

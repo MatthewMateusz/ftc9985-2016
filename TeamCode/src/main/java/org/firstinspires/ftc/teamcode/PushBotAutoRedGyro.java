@@ -94,10 +94,8 @@ public class PushBotAutoRedGyro extends PushBotAutomation {
 
         // Display the sensor levels while we are waiting to start
         waitForStartAndDisplayWhileWaiting();
-        telemetry.addData(">", "Robot Ready."); telemetry.update();
-
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
+        telemetry.addData(">", "Robot Ready.");
+        telemetry.update();
 
         gyroDriveDistance(  0.0,        SPEED_DRIVE, 16.0,          TOUT_MEDIUM);
         gyroTurnInPlace(    -45.0,      SPEED_TURN,                 TOUT_MEDIUM);

@@ -94,10 +94,8 @@ public class PushBotAutoBlue extends PushBotAutomation {
 
         // Display the sensor levels while we are waiting to start
         waitForStartAndDisplayWhileWaiting();
-        telemetry.addData(">", "Robot Ready."); telemetry.update();
-
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
+        telemetry.addData(">", "Robot Ready.");
+        telemetry.update();
 
         encoderDriveDistance(SPEED_DRIVE, 16.0, TOUT_MEDIUM);
         encoderTurnInPlace(SPEED_TURN, TURN_RIGHT/2.0, TOUT_MEDIUM);

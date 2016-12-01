@@ -96,9 +96,6 @@ public class PushBotAutoBlueGyro extends PushBotAutomation {
         waitForStartAndDisplayWhileWaiting();
         telemetry.addData(">", "Robot Ready."); telemetry.update();
 
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-
         gyroDriveDistance(      0.0,    SPEED_DRIVE, 16.0,      TOUT_MEDIUM);
         gyroTurnInPlace(        +45.0,  SPEED_TURN,             TOUT_MEDIUM);
         gyroDriveDistance(      +45.0,  SPEED_DRIVE, (24.0*1.41), TOUT_MEDIUM);

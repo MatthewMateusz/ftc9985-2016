@@ -96,11 +96,8 @@ public class PushBotAutoTest extends PushBotAutomation {
 
         // Display the sensor levels while we are waiting to start
         waitForStartAndDisplayWhileWaiting();
-        telemetry.addData(">", "Robot Ready"); telemetry.update();
-
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-        telemetry.addData("Test", "Started"); telemetry.update();
+        telemetry.addData("Test", "Started");
+        telemetry.update();
 
 //      // Robot actuator constant calibration:
 //      encoderDriveDistance(SPEED_DRIVE , 24.0,        TOUT_LONG);
