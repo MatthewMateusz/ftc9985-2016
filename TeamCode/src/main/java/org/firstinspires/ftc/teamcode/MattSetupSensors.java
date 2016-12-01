@@ -14,8 +14,10 @@ public class MattSetupSensors {
 
     /* Public sensor members. */
     /* Touch Sensor */
-    public ModernRoboticsDigitalTouchSensor touchSensorFront = null;
-    public ModernRoboticsDigitalTouchSensor touchSensorArm = null;
+    public ModernRoboticsDigitalTouchSensor touchSensorFront    = null;
+    public ModernRoboticsDigitalTouchSensor touchSensorArmPush  = null;
+    public ModernRoboticsDigitalTouchSensor touchSensorArmIn    = null;
+    public ModernRoboticsDigitalTouchSensor touchSensorArmOut   = null;
 
     //ODS *Addon
     public OpticalDistanceSensor lightSensor = null;
@@ -40,8 +42,10 @@ public class MattSetupSensors {
         hwMap = ahwMap;
 
         //Define touchSensorFront
-        touchSensorFront = (ModernRoboticsDigitalTouchSensor) hwMap.touchSensor.get("touchSensorFront");
-        touchSensorArm   = (ModernRoboticsDigitalTouchSensor) hwMap.touchSensor.get("touchSensorArm");
+        touchSensorFront    = (ModernRoboticsDigitalTouchSensor) hwMap.touchSensor.get("touchFront");
+        touchSensorArmPush  = (ModernRoboticsDigitalTouchSensor) hwMap.touchSensor.get("touchArmPush");
+        touchSensorArmIn    = (ModernRoboticsDigitalTouchSensor) hwMap.touchSensor.get("touchArmIn");
+        touchSensorArmOut   = (ModernRoboticsDigitalTouchSensor) hwMap.touchSensor.get("touchArmOut");
 
         //Define lightSensor & enbale its led
         lightSensor = hwMap.opticalDistanceSensor.get("lightSensor");
