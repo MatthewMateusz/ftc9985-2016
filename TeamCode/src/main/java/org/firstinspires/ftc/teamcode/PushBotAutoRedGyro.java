@@ -108,33 +108,33 @@ public class PushBotAutoRedGyro extends PushBotAutomation {
         gyroTurnInPlace(    0.0,        SPEED_TURN,                 TOUT_MEDIUM);
         gyroDriveDistance(  0.0,        SPEED_DRIVE, 12.0,          TOUT_MEDIUM);
         // it may or may not be safe to use 180 degree heading as -180 and +180 differ by 360!!
-        encoderTurnInPlace(SPEED_TURN, +180.0,       TOUT_MEDIUM);
-        encoderDriveDistance(SPEED_DRIVE, 6.0, TOUT_MEDIUM);
+        encoderTurnInPlace(             SPEED_TURN, +180.0,         TOUT_MEDIUM);
+        encoderDriveDistance(           SPEED_DRIVE, 6.0,           TOUT_MEDIUM);
 
-        encoderDriveToWhiteLine(SPEED_APPROACH, -WHITE_THRESHOLD, TOUT_LONG);
+        encoderDriveToWhiteLine(SPEED_APPROACH, -WHITE_THRESHOLD,   TOUT_LONG);
 
         if (sensors.colorSensor.blue() > sensors.colorSensor.red())
         {
-            encoderDriveDistance(SPEED_APPROACH, -6.0,   TOUT_MEDIUM);
+            encoderDriveDistance(       SPEED_APPROACH, -6.0,       TOUT_MEDIUM);
             pushButton(SPEED_ARM, TOUT_ARM);
         }
         else
         {
-            encoderDriveDistance(SPEED_APPROACH, -1.5,   TOUT_MEDIUM);
+            encoderDriveDistance(       SPEED_APPROACH, -1.5,       TOUT_MEDIUM);
             pushButton(SPEED_ARM, TOUT_ARM);
         }
 
-        encoderDriveDistance(SPEED_APPROACH, -24.0,      TOUT_MEDIUM);
-        encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
+        encoderDriveDistance(           SPEED_APPROACH, -24.0,      TOUT_MEDIUM);
+        encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD,    TOUT_LONG);
 
         if (sensors.colorSensor.blue() > sensors.colorSensor.red())
         {
-            encoderDriveDistance(SPEED_APPROACH, -6.0,   TOUT_MEDIUM);
+            encoderDriveDistance(       SPEED_APPROACH, -6.0,       TOUT_MEDIUM);
             pushButton(SPEED_ARM, TOUT_ARM);
         }
         else
         {
-            encoderDriveDistance(SPEED_APPROACH, -1.5,   TOUT_MEDIUM);
+            encoderDriveDistance(       SPEED_APPROACH, -1.5,       TOUT_MEDIUM);
             pushButton(SPEED_ARM, TOUT_ARM);
         }
 
