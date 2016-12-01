@@ -115,12 +115,12 @@ public class PushBotAutoRed extends PushBotAutomation {
         if (sensors.colorSensor.blue() > sensors.colorSensor.red())
         {
             encoderDriveDistance(SPEED_APPROACH, -6.0,   TOUT_MEDIUM);
-            pushButton(SPEED_ARM, TOUT_MEDIUM);
+            pushButton(SPEED_ARM, TOUT_ARM);
         }
         else
         {
             encoderDriveDistance(SPEED_APPROACH, -1.5,   TOUT_MEDIUM);
-            pushButton(SPEED_ARM, TOUT_MEDIUM);
+            pushButton(SPEED_ARM, TOUT_ARM);
         }
 
         encoderDriveDistance(SPEED_APPROACH, -24.0,      TOUT_MEDIUM);
@@ -129,13 +129,12 @@ public class PushBotAutoRed extends PushBotAutomation {
         if (sensors.colorSensor.blue() > sensors.colorSensor.red())
         {
             encoderDriveDistance(SPEED_APPROACH, -6.0,   TOUT_MEDIUM);
-
-            pushButton(SPEED_ARM, TOUT_MEDIUM);
+            pushButton(SPEED_ARM, TOUT_ARM);
         }
         else
         {
             encoderDriveDistance(SPEED_APPROACH, -1.5,   TOUT_MEDIUM);
-            pushButton(SPEED_ARM, TOUT_MEDIUM);
+            pushButton(SPEED_ARM, TOUT_ARM);
         }
 
         // sleep(1000);  // pause is needed only in case the last command pertained to servo motors

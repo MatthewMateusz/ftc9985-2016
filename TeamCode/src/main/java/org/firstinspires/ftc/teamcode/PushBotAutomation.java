@@ -194,19 +194,23 @@ abstract public class PushBotAutomation extends LinearOpMode {
 
 
     public void pushButton(double speed, double timeoutS) {
-        telemetry.addData("Status", "pushButton");
+        telemetry.addData("Status", "pushButton - push");
         telemetry.update();
         if (speed<0.0) speed=-speed; // we control the direction internally
         runtime.reset(); // reset the timeout time and start motion.
         robot.armMotor.setPower(-speed);
-        while ( opModeIsActive() && (runtime.seconds() < timeoutS) && (sensors.touchSensorArmPush.isPressed()== false) )
+        while ( opModeIsActive() && (sensors.touchSensorArmPush.isPressed()== false) && (runtime.seconds() < timeoutS) )
         {
             idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
         robot.armMotor.setPower(0);
+        telemetry.addData("Status", "pushButton - sleep");
         sleep(500);
+        telemetry.addData("Status", "pushButton - retract");
+        telemetry.update();
+        runtime.reset(); // reset the timeout time and start motion.
         robot.armMotor.setPower(speed);
-        while ( opModeIsActive() && (runtime.seconds() < timeoutS) && (sensors.touchSensorArmIn.isPressed()== false) )
+        while ( opModeIsActive() && (sensors.touchSensorArmIn.isPressed()== false) && (runtime.seconds() < timeoutS) )
         {
             idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
