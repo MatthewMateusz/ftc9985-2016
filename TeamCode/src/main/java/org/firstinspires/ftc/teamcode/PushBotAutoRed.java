@@ -110,7 +110,6 @@ public class PushBotAutoRed extends PushBotAutomation {
         encoderTurnInPlace(SPEED_TURN, +180.0,       TOUT_MEDIUM);
         encoderDriveDistance(SPEED_DRIVE, 6.0, TOUT_MEDIUM);
 
-
         encoderDriveToWhiteLine(SPEED_APPROACH, -WHITE_THRESHOLD, TOUT_LONG);
 
         if (sensors.colorSensor.blue() > sensors.colorSensor.red())
