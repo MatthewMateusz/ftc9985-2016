@@ -99,7 +99,7 @@ public class PushBotAutoBlue extends PushBotAutomation {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        encoderDriveDistance(SPEED_DRIVE, 12.0, TOUT_MEDIUM);
+        encoderDriveDistance(SPEED_DRIVE, 16.0, TOUT_MEDIUM);
         encoderTurnInPlace(SPEED_TURN, TURN_RIGHT/2.0, TOUT_MEDIUM);
         encoderDriveDistance(SPEED_DRIVE, (24.0*1.41), TOUT_MEDIUM);
         encoderTurnInPlace(SPEED_TURN, TURN_RIGHT/2.0, TOUT_MEDIUM);
@@ -111,11 +111,12 @@ public class PushBotAutoBlue extends PushBotAutomation {
 
         if (sensors.colorSensor.blue() > sensors.colorSensor.red())
         {
+            encoderDriveDistance(SPEED_APPROACH, 1.5,   TOUT_MEDIUM);
             pushButton(SPEED_ARM, TOUT_MEDIUM);
         }
         else
         {
-            encoderDriveDistance(SPEED_APPROACH, 3.0,   TOUT_MEDIUM);
+            encoderDriveDistance(SPEED_APPROACH, 6.0,   TOUT_MEDIUM);
             pushButton(SPEED_ARM, TOUT_MEDIUM);
         }
 
@@ -124,11 +125,13 @@ public class PushBotAutoBlue extends PushBotAutomation {
 
         if (sensors.colorSensor.blue() > sensors.colorSensor.red())
         {
+            encoderDriveDistance(SPEED_APPROACH, 1.5,   TOUT_MEDIUM);
+
             pushButton(SPEED_ARM, TOUT_MEDIUM);
         }
         else
         {
-            encoderDriveDistance(SPEED_APPROACH, 3.0, TOUT_MEDIUM);
+            encoderDriveDistance(SPEED_APPROACH, 6.0,   TOUT_MEDIUM);
             pushButton(SPEED_ARM, TOUT_MEDIUM);
         }
 
