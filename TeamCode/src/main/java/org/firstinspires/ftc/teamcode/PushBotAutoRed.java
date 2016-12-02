@@ -97,40 +97,42 @@ public class PushBotAutoRed extends PushBotAutomation {
         telemetry.addData(">", "Robot Ready.");
         telemetry.update();
 
-        encoderDriveDistance(SPEED_DRIVE, 16.0, TOUT_MEDIUM);
-        encoderTurnInPlace(SPEED_TURN, TURN_LEFT/2.0, TOUT_MEDIUM);
-        encoderDriveDistance(SPEED_DRIVE, (24.0*1.41), TOUT_MEDIUM);
-        encoderTurnInPlace(SPEED_TURN, TURN_LEFT/2.0, TOUT_MEDIUM);
+        encoderDriveDistance(SPEED_DRIVE, 24.0, TOUT_MEDIUM);
+        encoderTurnInPlace(SPEED_TURN, TURN_LEFT/3.0, TOUT_MEDIUM);
+        encoderDriveDistance(SPEED_DRIVE, 24.0, TOUT_MEDIUM);
+        encoderTurnInPlace(SPEED_TURN, TURN_RIGHT/3.0, TOUT_MEDIUM);
+        encoderDriveDistance(SPEED_DRIVE, 24.0, TOUT_MEDIUM);
+        encoderTurnInPlace(SPEED_TURN, TURN_LEFT, TOUT_MEDIUM);
         encoderDriveToBumper(SPEED_APPROACH, TOUT_LONG);
 
         encoderTurnInPlace(SPEED_TURN, TURN_LEFT,       TOUT_MEDIUM);
 
 
-        encoderDriveToWhiteLine(SPEED_APPROACH, -WHITE_THRESHOLD, TOUT_LONG);
-
-        if (sensors.colorSensor.blue() > sensors.colorSensor.red())
-        {
-            encoderDriveDistance(SPEED_APPROACH, -6.0,   TOUT_MEDIUM);
-            pushButton(SPEED_ARM, TOUT_ARM);
-        }
-        else
-        {
-            encoderDriveDistance(SPEED_APPROACH, -1.5,   TOUT_MEDIUM);
-            pushButton(SPEED_ARM, TOUT_ARM);
-        }
-
-        encoderDriveToWhiteLine(SPEED_APPROACH, -WHITE_THRESHOLD, TOUT_LONG);
-        encoderDriveDistance(SPEED_APPROACH, -24.0,      TOUT_MEDIUM);
         encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
 
-        if (sensors.colorSensor.blue() > sensors.colorSensor.red())
+        if (sensors.colorSensor.blue() < sensors.colorSensor.red())
         {
-            encoderDriveDistance(SPEED_APPROACH, -6.0,   TOUT_MEDIUM);
+            encoderDriveDistance(SPEED_APPROACH, 1.5,   TOUT_MEDIUM);
             pushButton(SPEED_ARM, TOUT_ARM);
         }
         else
         {
-            encoderDriveDistance(SPEED_APPROACH, -1.5,   TOUT_MEDIUM);
+            encoderDriveDistance(SPEED_APPROACH, 6.0,   TOUT_MEDIUM);
+            pushButton(SPEED_ARM, TOUT_ARM);
+        }
+
+        encoderDriveToWhiteLine(-SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
+        encoderDriveDistance(SPEED_FULL, -36.0,                   TOUT_MEDIUM);
+        encoderDriveToWhiteLine(-SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
+
+        if (sensors.colorSensor.blue() < sensors.colorSensor.red())
+        {
+            encoderDriveDistance(SPEED_APPROACH, 1.5,   TOUT_MEDIUM);
+            pushButton(SPEED_ARM, TOUT_ARM);
+        }
+        else
+        {
+            encoderDriveDistance(SPEED_APPROACH, 6.0,   TOUT_MEDIUM);
             pushButton(SPEED_ARM, TOUT_ARM);
         }
 
