@@ -103,10 +103,8 @@ public class PushBotAutoRed extends PushBotAutomation {
         encoderTurnInPlace(SPEED_TURN, TURN_LEFT/2.0, TOUT_MEDIUM);
         encoderDriveToBumper(SPEED_APPROACH, TOUT_LONG);
 
-        encoderTurnInPlace(SPEED_TURN, TURN_RIGHT,       TOUT_MEDIUM);
-        encoderDriveDistance(SPEED_DRIVE, 12.0, TOUT_MEDIUM);
-        encoderTurnInPlace(SPEED_TURN, +180.0,       TOUT_MEDIUM);
-        encoderDriveDistance(SPEED_DRIVE, 6.0, TOUT_MEDIUM);
+        encoderTurnInPlace(SPEED_TURN, TURN_LEFT,       TOUT_MEDIUM);
+
 
         encoderDriveToWhiteLine(SPEED_APPROACH, -WHITE_THRESHOLD, TOUT_LONG);
 
@@ -121,6 +119,7 @@ public class PushBotAutoRed extends PushBotAutomation {
             pushButton(SPEED_ARM, TOUT_ARM);
         }
 
+        encoderDriveToWhiteLine(SPEED_APPROACH, -WHITE_THRESHOLD, TOUT_LONG);
         encoderDriveDistance(SPEED_APPROACH, -24.0,      TOUT_MEDIUM);
         encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
 
