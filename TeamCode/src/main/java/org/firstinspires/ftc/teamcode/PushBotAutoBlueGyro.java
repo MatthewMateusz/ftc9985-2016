@@ -36,6 +36,7 @@ import android.app.Activity;
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -56,6 +57,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  */
 
 @Autonomous(name="Autonomous Blue Gyro", group="Blue")
+@Disabled
 public class PushBotAutoBlueGyro extends PushBotAutomation {
 
 
@@ -97,10 +99,10 @@ public class PushBotAutoBlueGyro extends PushBotAutomation {
         telemetry.addData(">", "Robot Ready."); telemetry.update();
 
         gyroDriveDistance(      0.0,    SPEED_DRIVE, 16.0,      TOUT_MEDIUM);
-        gyroTurnInPlace(        +45.0,  SPEED_TURN,             TOUT_MEDIUM);
-        gyroDriveDistance(      +45.0,  SPEED_DRIVE, (24.0*1.41), TOUT_MEDIUM);
-        gyroTurnInPlace(        +90.0,  SPEED_TURN,             TOUT_MEDIUM);
-        gyroDriveToBumper(      +90.0,  SPEED_APPROACH,         TOUT_LONG);
+        gyroTurnInPlace(        -45.0,  SPEED_TURN,             TOUT_MEDIUM);
+        gyroDriveDistance(      -45.0,  SPEED_DRIVE, (24.0*1.41), TOUT_MEDIUM);
+        gyroTurnInPlace(        -90.0,  SPEED_TURN,             TOUT_MEDIUM);
+        gyroDriveToBumper(      -90.0,  SPEED_APPROACH,         TOUT_LONG);
 
         gyroTurnInPlace(        0.0,    SPEED_TURN,             TOUT_MEDIUM);
 

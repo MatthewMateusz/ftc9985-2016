@@ -16,7 +16,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
 
     /* Declare OpMode constants for users */
     public static final double  SPEED_FULL      = 1.0;
-    public static final double  SPEED_DRIVE     = 0.75;
+    public static final double  SPEED_DRIVE     = 0.80;
     public static final double  SPEED_APPROACH  = 0.5;
 
     public static final double  SPEED_TURN      = 0.5;
@@ -25,8 +25,8 @@ abstract public class PushBotAutomation extends LinearOpMode {
     public static final double  TURN_RIGHT      = ANGLE_90;
     public static final double  WHITE_THRESHOLD = 0.6;  // background spans between 0.1 - 0.5 from dark to light
 
-    public static final double  SPEED_ARM       = 0.1;
-    public static final double  TOUT_ARM        = 5;
+    public static final double  SPEED_ARM       = 0.25;
+    public static final double  TOUT_ARM        = 3;
 
     public static final double  TOUT_SHORT      = 3;
     public static final double  TOUT_MEDIUM     = 5;
