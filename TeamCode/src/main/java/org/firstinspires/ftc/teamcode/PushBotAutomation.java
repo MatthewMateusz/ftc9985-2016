@@ -26,7 +26,7 @@ abstract public class PushBotAutomation extends LinearOpMode {
     public static final double  WHITE_THRESHOLD = 0.6;  // background spans between 0.1 - 0.5 from dark to light
 
     public static final double  SPEED_ARM       = 0.25;
-    public static final double  TOUT_ARM        = 3;
+    public static final double  TOUT_ARM        = 5;
 
     public static final double  TOUT_SHORT      = 3;
     public static final double  TOUT_MEDIUM     = 5;
