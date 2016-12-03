@@ -89,7 +89,7 @@ public class PushBotAutoRed extends PushBotAutomation {
         telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition()); telemetry.update();
 
         // Try to calibrate the gyro if available and make sure it is calibrated before continuing or disable the gyro
-        calibrateGyroOrFail(10);
+        calibrateNoGyro();
         sensors.colorSensor.enableLed(false);
 
         // Display the sensor levels while we are waiting to start
