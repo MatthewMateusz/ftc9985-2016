@@ -118,7 +118,9 @@ public class TelopDrive extends OpMode{
         robot.rightMotor.setPower(right);
 
         // Limit arm movement at end postions or when pushed enough
-        if (  ( (middle<0) && (sensors.touchSensorArmPush.isPressed()== true) )
+        if (  ( (middle<0) &&
+                ( (sensors.touchSensorArmPush.isPressed()== true) ||
+                        (sensors.touchSensorArmOut.isPressed() == true)))
             ||( (middle>0) && (sensors.touchSensorArmIn.isPressed()== true) ) )
             middle=0;
         robot.armMotor.setPower(middle);

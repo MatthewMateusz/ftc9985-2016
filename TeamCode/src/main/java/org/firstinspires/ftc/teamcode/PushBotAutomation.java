@@ -199,7 +199,10 @@ abstract public class PushBotAutomation extends LinearOpMode {
         if (speed<0.0) speed=-speed; // we control the direction internally
         runtime.reset(); // reset the timeout time and start motion.
         robot.armMotor.setPower(-speed);
-        while ( opModeIsActive() && (sensors.touchSensorArmPush.isPressed()== false) && (runtime.seconds() < timeoutS) )
+        while ( opModeIsActive() &&
+                (sensors.touchSensorArmPush.isPressed()== false) &&
+                (sensors.touchSensorArmOut.isPressed() == false) &&
+                (runtime.seconds() < timeoutS) )
         {
             idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
