@@ -124,7 +124,7 @@ public class PushBotAutoBlue extends PushBotAutomation {
             }
         }
 
-        encoderDriveDistance(SPEED_APPROACH, 24.0,      TOUT_MEDIUM);
+        encoderDriveDistance(SPEED_DRIVE, 30.0,         TOUT_MEDIUM);
         encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
 
         if (sensors.colorSensor.blue() > sensors.colorSensor.red())
