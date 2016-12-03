@@ -109,14 +109,14 @@ public class PushBotAutoRed extends PushBotAutomation {
         encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD,    TOUT_LONG);
         encoderDriveDistance(SPEED_APPROACH, 1.5,                   TOUT_MEDIUM);
 
-        if (sensors.colorSensor.blue() < sensors.colorSensor.red())
+        if (sensors.colorSensor.blue() <= sensors.colorSensor.red())
         {
             pushButton(SPEED_ARM, TOUT_ARM);
         }
         else
         {
             encoderDriveDistance(SPEED_APPROACH, 4.5,               TOUT_MEDIUM);
-            if (sensors.colorSensor.blue() < sensors.colorSensor.red())
+            if (sensors.colorSensor.blue() <= sensors.colorSensor.red())
             {
                 pushButton(SPEED_ARM, TOUT_ARM);
             }
@@ -128,14 +128,14 @@ public class PushBotAutoRed extends PushBotAutomation {
 
         encoderDriveToWhiteLine(-SPEED_APPROACH, WHITE_THRESHOLD,   TOUT_LONG);
         encoderDriveDistance(SPEED_APPROACH, 1.5,                   TOUT_MEDIUM);
-        if (sensors.colorSensor.blue() < sensors.colorSensor.red())
+        if (sensors.colorSensor.blue() <= sensors.colorSensor.red())
         {
             pushButton(SPEED_ARM, TOUT_ARM);
         }
         else
         {
             encoderDriveDistance(SPEED_APPROACH, 4.5,               TOUT_MEDIUM);
-            if (sensors.colorSensor.blue() < sensors.colorSensor.red())
+            if (sensors.colorSensor.blue() <= sensors.colorSensor.red())
             {
                 pushButton(SPEED_ARM, TOUT_ARM);
             }
