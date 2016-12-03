@@ -78,9 +78,9 @@ abstract public class PushBotAutomation extends LinearOpMode {
     }
 
     public void calibrateNoGyro() {
-        telemetry.addData("Status", "calibrateNoGyro");
-        telemetry.update();
-        sensors.gyroSensor=null;
+            telemetry.addData("Status", "calibrateNoGyro");
+            telemetry.update();
+            sensors.gyroSensor=null;
     }
 
     // Display the sensor levels while we are waiting to start

@@ -62,8 +62,8 @@ public class TelopDrive extends OpMode{
 //  private double              clawOffset      = 0.0 ;                     // Servo mid position
 
 //  private staticfinal double  CLAW_SPEED      = 0.02 ;                    // sets rate to move servo
-    private static final double ARM_UP_POWER    =  0.45 ;                   //
-    private static final double ARM_DOWN_POWER  = -0.45 ;
+    private static final double ARM_UP_POWER    =  0.8 ;                   //
+    private static final double ARM_DOWN_POWER  = -0.8 ;
 
     /*
      * Code to run ONCE when the driver hits INIT

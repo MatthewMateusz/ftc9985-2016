@@ -146,6 +146,4 @@ public class PushBotAutoBlue extends PushBotAutomation {
 
         telemetry.addData("Path", "Complete"); telemetry.update();
     }
-
-
 }
