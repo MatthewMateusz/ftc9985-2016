@@ -97,13 +97,11 @@ public class PushBotAutoRed extends PushBotAutomation {
         telemetry.addData(">", "Robot Ready.");
         telemetry.update();
 
-        encoderDriveDistance(SPEED_DRIVE, 24.0, TOUT_MEDIUM);
-        encoderTurnInPlace(SPEED_TURN, TURN_LEFT/3.0, TOUT_MEDIUM);
-        encoderDriveDistance(SPEED_DRIVE, 24.0, TOUT_MEDIUM);
-        encoderTurnInPlace(SPEED_TURN, TURN_RIGHT/3.0, TOUT_MEDIUM);
-        encoderDriveDistance(SPEED_DRIVE, 24.0, TOUT_MEDIUM);
-        encoderTurnInPlace(SPEED_TURN, TURN_LEFT, TOUT_MEDIUM);
-        encoderDriveToBumper(SPEED_APPROACH, TOUT_LONG);
+        encoderDriveDistance(SPEED_DRIVE, 6.0,  TOUT_MEDIUM);
+        encoderTurnInPlace(SPEED_TURN, -20.0,   TOUT_MEDIUM);
+        encoderDriveDistance(SPEED_DRIVE, 70.2, TOUT_LONG);
+        encoderTurnInPlace(SPEED_TURN, -70.0,   TOUT_MEDIUM);
+        encoderDriveToBumper(SPEED_APPROACH,    TOUT_LONG);
 
         encoderTurnInPlace(SPEED_TURN, TURN_LEFT,       TOUT_MEDIUM);
 
