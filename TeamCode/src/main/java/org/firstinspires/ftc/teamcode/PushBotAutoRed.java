@@ -107,36 +107,40 @@ public class PushBotAutoRed extends PushBotAutomation {
 
 
         encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD,    TOUT_LONG);
+        encoderDriveDistance(SPEED_APPROACH, 1.5,                   TOUT_MEDIUM);
 
         if (sensors.colorSensor.blue() < sensors.colorSensor.red())
         {
-            encoderDriveDistance(SPEED_APPROACH, 1.5,               TOUT_MEDIUM);
             pushButton(SPEED_ARM, TOUT_ARM);
         }
         else
         {
-            encoderDriveDistance(SPEED_APPROACH, 6.0,               TOUT_MEDIUM);
-            pushButton(SPEED_ARM, TOUT_ARM);
+            encoderDriveDistance(SPEED_APPROACH, 4.5,               TOUT_MEDIUM);
+            if (sensors.colorSensor.blue() < sensors.colorSensor.red())
+            {
+                pushButton(SPEED_ARM, TOUT_ARM);
+            }
         }
 
-//      encoderDriveToWhiteLine(-SPEED_APPROACH, WHITE_THRESHOLD,   TOUT_LONG);
-        encoderTurnInPlace(SPEED_TURN, -4.0,                        TOUT_MEDIUM);
-        encoderDriveDistance(SPEED_FULL, -36.0,                     TOUT_MEDIUM); // this passes the white line
-        encoderTurnInPlace(SPEED_TURN, 4.0,                         TOUT_MEDIUM);
+//      encoderTurnInPlace(SPEED_TURN, -4.0,                        TOUT_MEDIUM);
+        encoderDriveDistance(SPEED_FULL, -40.0,                     TOUT_MEDIUM); // this passes the white line
+//      encoderTurnInPlace(SPEED_TURN, 4.0,                         TOUT_MEDIUM);
+
         encoderDriveToWhiteLine(-SPEED_APPROACH, WHITE_THRESHOLD,   TOUT_LONG);
-
+        encoderDriveDistance(SPEED_APPROACH, 1.5,                   TOUT_MEDIUM);
         if (sensors.colorSensor.blue() < sensors.colorSensor.red())
         {
-            encoderDriveDistance(SPEED_APPROACH, 1.5,               TOUT_MEDIUM);
             pushButton(SPEED_ARM, TOUT_ARM);
         }
         else
         {
-            encoderDriveDistance(SPEED_APPROACH, 6.0,               TOUT_MEDIUM);
-            pushButton(SPEED_ARM, TOUT_ARM);
+            encoderDriveDistance(SPEED_APPROACH, 4.5,               TOUT_MEDIUM);
+            if (sensors.colorSensor.blue() < sensors.colorSensor.red())
+            {
+                pushButton(SPEED_ARM, TOUT_ARM);
+            }
         }
 
-        // sleep(1000);  // pause is needed only in case the last command pertained to servo motors
         telemetry.addData("Path", "Complete"); telemetry.update();
     }
 
