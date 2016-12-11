@@ -112,7 +112,7 @@ public class TelopDrive extends OpMode{
         }
 
         // crash avoidane system, override it by presssong B
-        if ( (left>0.0) && (right>0.0) && !gamepad1.b ) {
+        if ( (left>0.0) && (right>0.0) && (sensors.touchSensorFront) && !gamepad1.b ) {
             left = 0.0;
             right = 0.0;
         }
