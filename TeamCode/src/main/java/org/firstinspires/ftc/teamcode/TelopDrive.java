@@ -103,6 +103,24 @@ public class TelopDrive extends OpMode{
         double left   = -gamepad1.left_stick_y;
         double right  = -gamepad1.right_stick_y;
         double middle = -gamepad2.left_stick_y;
+
+        // precision mode drive
+        if (gamepad1.left_bumper || gamepad1.right_bumper)
+        {
+            left = 0.25 * left;
+            right = 0.25 * right;
+        }
+
+        // crash avoidane system, override it by presssong B
+        if ( (left>0.0) && (right>0.0) && !gamepad1.b ) {
+            left = 0.0;
+            right = 0.0;
+        }
+
+        robot.leftMotor.setPower(left);
+        robot.rightMotor.setPower(right);
+
+
         // Use gamepad buttons to move the arm up (Y) and down (A)
         if (Math.abs(middle)<0.1 ) {
             if (gamepad1.y) {
@@ -114,15 +132,14 @@ public class TelopDrive extends OpMode{
             }
         }
 
-        robot.leftMotor.setPower(left);
-        robot.rightMotor.setPower(right);
-
         // Limit arm movement at end postions or when pushed enough
         if (  ( (middle<0) &&
                 ( (sensors.touchSensorArmPush.isPressed()== true) ||
                         (sensors.touchSensorArmOut.isPressed() == true)))
-            ||( (middle>0) && (sensors.touchSensorArmIn.isPressed()== true) ) )
+            ||( (middle>0) && (sensors.touchSensorArmIn.isPressed()== true) ) ) {
             middle=0;
+        }
+
         robot.armMotor.setPower(middle);
 
 
@@ -134,9 +151,11 @@ public class TelopDrive extends OpMode{
 
         // Send telemetry message to signify robot running;
 //        telemetry.addData("claw",  "Offset = %.2f", clawOffset);
-        telemetry.addData("left",  "%.2f", left);
-        telemetry.addData("right", "%.2f", right);
-        telemetry.addData("arm",   "%.2f", middle);
+        telemetry.addData("left",       "%.2f",     left);
+        telemetry.addData("right",      "%.2f",     right);
+        telemetry.addData("arm",        "%.2f",     middle);
+        telemetry.addData("left trig",  "%.2f",     gamepad1.left_trigger);
+        telemetry.addData("right trig",  "%.2f",    gamepad1.right_trigger);
     }
 
     /*
