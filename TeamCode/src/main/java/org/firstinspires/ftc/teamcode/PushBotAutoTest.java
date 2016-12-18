@@ -57,7 +57,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  */
 
 @Autonomous(name="Autonomous Test", group="Auto")
-@Disabled
+
 public class PushBotAutoTest extends PushBotAutomation {
 
 
@@ -91,7 +91,8 @@ public class PushBotAutoTest extends PushBotAutomation {
         telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition()); telemetry.update();
 
         // Try to calibrate the gyro if available and make sure it is calibrated before continuing or disable the gyro
-        calibrateGyroOrFail(10);
+//        calibrateGyroOrFail(10);
+        calibrateNoGyro();
         sensors.colorSensor.enableLed(false);
 
         // Display the sensor levels while we are waiting to start
@@ -111,7 +112,7 @@ public class PushBotAutoTest extends PushBotAutomation {
 
 //      pushButton(SPEED_ARM, TOUT_MEDIUM);
 
-        if (false) {
+/*        if (false) {
             // testing driving in cyrcles by encooder
             while (opModeIsActive()) {
                 encoderTurnInPlace(SPEED_TURN, 40.0, TOUT_MEDIUM);
@@ -174,7 +175,8 @@ public class PushBotAutoTest extends PushBotAutomation {
 
 
 
-
+*/
+        encoderTurnInPlace(SPEED_TURN , TURN_LEFT , TOUT_LONG);
         telemetry.addData("Test", "Complete"); telemetry.update();
     }
 
