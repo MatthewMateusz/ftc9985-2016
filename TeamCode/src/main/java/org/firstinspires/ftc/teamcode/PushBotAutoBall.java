@@ -96,7 +96,8 @@ public class PushBotAutoBall extends PushBotAutomation {
         telemetry.addData("Ball", "Started");
         telemetry.update();
 
-        encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
+        encoderDriveToBumper(SPEED_APPROACH, TOUT_LONG);
+        encoderDriveDistance(SPEED_APPROACH, 12.0, TOUT_MEDIUM);
 
         telemetry.addData("Ball", "Complete");
         telemetry.update();
