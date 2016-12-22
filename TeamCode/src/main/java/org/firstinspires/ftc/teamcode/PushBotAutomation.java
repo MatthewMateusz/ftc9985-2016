@@ -87,9 +87,10 @@ abstract public class PushBotAutomation extends LinearOpMode {
     public void waitForStartAndDisplayWhileWaiting() {
         while (!isStarted()) {
             telemetry.addData("Light Level  ", sensors.lightSensor.getLightDetected());
-            telemetry.addData("Red Level    ", sensors.colorSensor.red());
-            telemetry.addData("Green Level  ", sensors.colorSensor.green());
-            telemetry.addData("Blue Level   ", sensors.colorSensor.blue());
+            telemetry.addData("Color:       ", "R "+ sensors.colorSensor.red()
+                    + " R " + sensors.colorSensor.green()
+                    + " B " + sensors.colorSensor.blue()
+            );
             telemetry.addData("Bumper Front ", sensors.touchSensorFront.isPressed());
             telemetry.addData("Bumper Arm   ", sensors.touchSensorArmPush.isPressed());
             telemetry.addData("Limit In     ", sensors.touchSensorArmIn.isPressed());
