@@ -86,10 +86,14 @@ abstract public class PushBotAutomation extends LinearOpMode {
     // Display the sensor levels while we are waiting to start
     public void waitForStartAndDisplayWhileWaiting() {
         while (!isStarted()) {
-            telemetry.addData("Light Level ", sensors.lightSensor.getLightDetected());
-            telemetry.addData("Red Level   ", sensors.colorSensor.red());
-            telemetry.addData("Green Level ", sensors.colorSensor.green());
-            telemetry.addData("Blue Level  ", sensors.colorSensor.blue());
+            telemetry.addData("Light Level  ", sensors.lightSensor.getLightDetected());
+            telemetry.addData("Red Level    ", sensors.colorSensor.red());
+            telemetry.addData("Green Level  ", sensors.colorSensor.green());
+            telemetry.addData("Blue Level   ", sensors.colorSensor.blue());
+            telemetry.addData("Bumper Front ", sensors.touchSensorFront.isPressed());
+            telemetry.addData("Bumper Arm   ", sensors.touchSensorArmPush.isPressed());
+            telemetry.addData("Limit In     ", sensors.touchSensorArmIn.isPressed());
+            telemetry.addData("Limit Out    ", sensors.touchSensorArmOut.isPressed());
             if (sensors.gyroSensor != null) telemetry.addData("Gyro Z      ", sensors.gyroSensor.getIntegratedZValue());
             telemetry.update();
             idle();
