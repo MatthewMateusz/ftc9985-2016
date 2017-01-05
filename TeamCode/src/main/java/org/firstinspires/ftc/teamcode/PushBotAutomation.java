@@ -54,29 +54,6 @@ abstract public class PushBotAutomation extends LinearOpMode {
         telemetry.update();
     }
 
-    public void calibrateGyroOrFail(double timeoutS) {
-        if (sensors.gyroSensor!=null) {
-            telemetry.addData("Status", "calibrateGyroOrFail in "+timeoutS);
-            telemetry.update();
-            try {
-                runtime.reset(); // reset the timeout time and start motion.
-                sensors.gyroSensor.calibrate();
-                Boolean flash_color_led = true;
-                while (!isStopRequested() && sensors.gyroSensor.isCalibrating())  {
-                    if (runtime.seconds() > timeoutS) throw new TimeoutException();
-                    sensors.colorSensor.enableLed(flash_color_led); flash_color_led=!flash_color_led;
-                    sleep(100);
-                }
-                telemetry.addData("Status", "calibrateGyroOrFail Done");
-                telemetry.update();
-            } catch (Exception e) {
-                sensors.gyroSensor=null;
-                telemetry.addData("Status", "calibrateGyroOrFail Failed");
-                telemetry.update();
-            }
-        }
-    }
-
     public void calibrateNoGyro() {
             telemetry.addData("Status", "calibrateNoGyro");
             telemetry.update();
@@ -295,10 +272,42 @@ abstract public class PushBotAutomation extends LinearOpMode {
 
 
 
+
+
+
+
+
+
     /* Declare OpMode members. */
     private static final double     HEADING_THRESHOLD       = 1 ;       // As tight as we can make it with an integer gyro
     private static final double     P_TURN_COEFF            = 0.1;      // Larger is more responsive, but also less stable
     private static final double     P_DRIVE_COEFF           = 0.05;     // Larger is more responsive, but also less stable
+
+
+
+    public void calibrateGyroOrFail(double timeoutS) {
+        if (sensors.gyroSensor!=null) {
+            telemetry.addData("Status", "calibrateGyroOrFail in "+timeoutS);
+            telemetry.update();
+            try {
+                runtime.reset(); // reset the timeout time and start motion.
+                sensors.gyroSensor.calibrate();
+                Boolean flash_color_led = true;
+                while (!isStopRequested() && sensors.gyroSensor.isCalibrating())  {
+                    if (runtime.seconds() > timeoutS) throw new TimeoutException();
+                    sensors.colorSensor.enableLed(flash_color_led); flash_color_led=!flash_color_led;
+                    sleep(100);
+                }
+                telemetry.addData("Status", "calibrateGyroOrFail Done");
+                telemetry.update();
+            } catch (Exception e) {
+                sensors.gyroSensor=null;
+                telemetry.addData("Status", "calibrateGyroOrFail Failed");
+                telemetry.update();
+            }
+        }
+    }
+
 
 
     public void gyroResetHeading() {
@@ -306,6 +315,24 @@ abstract public class PushBotAutomation extends LinearOpMode {
         telemetry.update();
         if (sensors.gyroSensor!=null) sensors.gyroSensor.resetZAxisIntegrator();
     }
+
+
+
+    public double gyroHeadingCorrection(double targetAngle) {
+        double robotError = 0.0;
+        if (sensors.gyroSensor!=null) {
+            try {
+                // calculate error in -179 to +180 range  (
+                robotError = targetAngle - sensors.gyroSensor.getIntegratedZValue();
+                while (robotError > 180)  robotError -= 360;
+                while (robotError <= -180) robotError += 360;
+            } catch (Exception e) {
+                robotError = 0.0;
+            }
+        }
+        return robotError;
+    }
+
 
 
     /**
