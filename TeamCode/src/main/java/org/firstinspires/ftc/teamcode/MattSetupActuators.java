@@ -34,7 +34,7 @@ public class MattSetupActuators
     public static final double WHEEL_DIAMETER_INCHES    = 4.0 * (24.5/24.0);  // wheel circumference with real-life travel distance adjustment
     public static final double WHEEL_SEPARATION_INCHES  = 14.0;
     public static final double COUNTS_PER_INCH          = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.14159269);
-    public static final double INCHES_PER_ANGLE_INPLACE = (11.5 / 90.0); // calibration affected by the distance between the driving wheels
+    public static final double INCHES_PER_ANGLE_INPLACE = (11.8 / 90.0); // calibration affected by the distance between the driving wheels
     public static final double INCHES_PER_ANGLE_DRAG    = ( (WHEEL_SEPARATION_INCHES * 3.14159269 / 2.0) / 90.0); // calibration affected by the distance between the driving wheels
 
     /* local members. */
