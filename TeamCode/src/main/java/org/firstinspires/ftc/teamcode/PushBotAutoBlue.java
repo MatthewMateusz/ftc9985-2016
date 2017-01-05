@@ -110,7 +110,7 @@ public class PushBotAutoBlue extends PushBotAutomation {
         if (sensors.colorSensor.blue() > sensors.colorSensor.red())
         {
             encoderDriveDistance(SPEED_APPROACH, 1.5,   TOUT_MEDIUM);
-            if (sensors.colorSensor.blue() > sensors.colorSensor.red())
+            if ( MattColorDetector.confirmBlue(sensors.colorSensor) )
             {
                 pushButton(SPEED_ARM, TOUT_ARM);
             }
@@ -118,7 +118,7 @@ public class PushBotAutoBlue extends PushBotAutomation {
         else
         {
             encoderDriveDistance(SPEED_APPROACH, 6.0,   TOUT_MEDIUM);
-            if (sensors.colorSensor.blue() > sensors.colorSensor.red())
+            if ( MattColorDetector.confirmBlue(sensors.colorSensor) )
             {
                 pushButton(SPEED_ARM, TOUT_ARM);
             }
@@ -127,10 +127,10 @@ public class PushBotAutoBlue extends PushBotAutomation {
         encoderDriveDistance(SPEED_DRIVE, 30.0,         TOUT_MEDIUM);
         encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
 
-        if (sensors.colorSensor.blue() > sensors.colorSensor.red())
+        if ( MattColorDetector.confirmBlue(sensors.colorSensor) )
         {
             encoderDriveDistance(SPEED_APPROACH, 1.5,   TOUT_MEDIUM);
-            if (sensors.colorSensor.blue() > sensors.colorSensor.red())
+            if ( MattColorDetector.confirmBlue(sensors.colorSensor) )
             {
                 pushButton(SPEED_ARM, TOUT_ARM);
             }
@@ -138,7 +138,7 @@ public class PushBotAutoBlue extends PushBotAutomation {
         else
         {
             encoderDriveDistance(SPEED_APPROACH, 6.0,   TOUT_MEDIUM);
-            if (sensors.colorSensor.blue() > sensors.colorSensor.red())
+            if ( MattColorDetector.confirmBlue(sensors.colorSensor) )
             {
                 pushButton(SPEED_ARM, TOUT_ARM);
             }
