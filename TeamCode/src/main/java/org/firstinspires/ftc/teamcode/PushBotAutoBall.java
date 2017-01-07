@@ -96,7 +96,20 @@ public class PushBotAutoBall extends PushBotAutomation {
         telemetry.addData("Ball", "Started");
         telemetry.update();
 
+        //wait to allow the other team most of their autonomous mode
+        try
+        {
+            sleep(20000);
+            // 20 seconds of sleep
+        }
+        catch (Exception e)
+        {
+
+        }
+
+        //drive until ball is touch
         encoderDriveToBumper(SPEED_APPROACH, TOUT_LONG);
+        //Displace ball
         encoderDriveDistance(SPEED_APPROACH, 12.0, TOUT_MEDIUM);
 
         telemetry.addData("Ball", "Complete");
