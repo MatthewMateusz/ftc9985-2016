@@ -88,7 +88,7 @@ public class PushBotAutoBall extends PushBotAutomation {
         telemetry.update();
 
         // Try to calibrate the gyro if available and make sure it is calibrated before continuing or disable the gyro
-        calibrateGyroOrFail(10);
+        calibrateGyroOrFail(6);
         sensors.colorSensor.enableLed(false);
 
         // Display the sensor levels while we are waiting to start
