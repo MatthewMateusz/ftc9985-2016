@@ -144,6 +144,13 @@ public class PushBotAutoBlueGyro extends PushBotAutomation {
             }
         }
 
+        encoderTurnInPlace(SPEED_TURN, 5.0 + gyroHeadingCorrection(0.0), TOUT_SHORT);
+        encoderDriveDistance(SPEED_DRIVE, -30.0,        TOUT_MEDIUM);
+        encoderDriveToWhiteLine(-SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
+        encoderDriveDistance(SPEED_APPROACH, -12.0,     TOUT_MEDIUM);
+
+
+
         telemetry.addData("Path", "Complete"); telemetry.update();
     }
 }
