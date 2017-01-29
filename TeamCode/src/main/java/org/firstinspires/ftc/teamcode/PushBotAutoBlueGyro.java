@@ -55,8 +55,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Autonomous Blue", group="Blue")
-public class PushBotAutoBlue extends PushBotAutomation {
+@Autonomous(name="Autonomous Blue w Gyro", group="Blue")
+public class PushBotAutoBlueGyro extends PushBotAutomation {
 
 
     /* Declare OpMode members. */
@@ -89,7 +89,7 @@ public class PushBotAutoBlue extends PushBotAutomation {
         telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition()); telemetry.update();
 
         // Try to calibrate the gyro if available and make sure it is calibrated before continuing or disable the gyro
-        calibrateNoGyro();
+        calibrateGyroOrFail(6);
         sensors.colorSensor.enableLed(false);
 
         // Display the sensor levels while we are waiting to start
@@ -103,7 +103,7 @@ public class PushBotAutoBlue extends PushBotAutomation {
         encoderTurnInPlace(SPEED_TURN, TURN_RIGHT/2.0, TOUT_MEDIUM);
         encoderDriveToBumper(SPEED_APPROACH, TOUT_LONG);
 
-        encoderTurnInPlace(SPEED_TURN, TURN_LEFT, TOUT_MEDIUM);
+        encoderTurnInPlace(SPEED_TURN, TURN_LEFT + gyroHeadingCorrection(-90.0), TOUT_MEDIUM);
 
         encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
 

@@ -55,8 +55,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Autonomous Blue", group="Blue")
-public class PushBotAutoBlue extends PushBotAutomation {
+@Autonomous(name="Autonomous Red w Gyro", group="Red")
+public class PushBotAutoRedGyro extends PushBotAutomation {
 
 
     /* Declare OpMode members. */
@@ -67,7 +67,7 @@ public class PushBotAutoBlue extends PushBotAutomation {
 
     @Override
     public void runOpMode() {
-        /*
+       /*
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
@@ -89,7 +89,7 @@ public class PushBotAutoBlue extends PushBotAutomation {
         telemetry.addData("Path0",  "Starting at %7d :%7d", robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition()); telemetry.update();
 
         // Try to calibrate the gyro if available and make sure it is calibrated before continuing or disable the gyro
-        calibrateNoGyro();
+        calibrateGyroOrFail(6);
         sensors.colorSensor.enableLed(false);
 
         // Display the sensor levels while we are waiting to start
@@ -97,48 +97,45 @@ public class PushBotAutoBlue extends PushBotAutomation {
         telemetry.addData(">", "Robot Ready.");
         telemetry.update();
 
-        encoderDriveDistance(SPEED_DRIVE, 16.0, TOUT_MEDIUM);
-        encoderTurnInPlace(SPEED_TURN, TURN_RIGHT/2.0, TOUT_MEDIUM);
-        encoderDriveDistance(SPEED_DRIVE, (24.0*1.41), TOUT_MEDIUM);
-        encoderTurnInPlace(SPEED_TURN, TURN_RIGHT/2.0, TOUT_MEDIUM);
-        encoderDriveToBumper(SPEED_APPROACH, TOUT_LONG);
+        encoderDriveDistance(SPEED_DRIVE, 6.0,                      TOUT_MEDIUM);
+        encoderTurnInPlace(SPEED_TURN, -20.0,                       TOUT_MEDIUM);
+        encoderDriveDistance(SPEED_DRIVE, 70.2,                     TOUT_LONG);
+        encoderTurnInPlace(SPEED_TURN, -70.0,                       TOUT_MEDIUM);
+        encoderDriveToBumper(SPEED_APPROACH,                        TOUT_LONG);
 
-        encoderTurnInPlace(SPEED_TURN, TURN_LEFT, TOUT_MEDIUM);
+        encoderTurnInPlace(SPEED_TURN, TURN_LEFT + gyroHeadingCorrection(+90.0), TOUT_MEDIUM);
 
-        encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
 
-        if ( MattColorDetector.confirmBlue(sensors.colorSensor) )
+        encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD,    TOUT_LONG);
+        encoderDriveDistance(SPEED_APPROACH, 1.5,                   TOUT_MEDIUM);
+
+        if ( MattColorDetector.confirmRed(sensors.colorSensor) )
         {
-            encoderDriveDistance(SPEED_APPROACH, 1.5,   TOUT_MEDIUM);
-            if ( MattColorDetector.confirmBlue(sensors.colorSensor) )
-            {
-                pushButton(SPEED_ARM, TOUT_ARM);
-            }
+            pushButton(SPEED_ARM, TOUT_ARM);
         }
         else
         {
-            encoderDriveDistance(SPEED_APPROACH, 6.0,   TOUT_MEDIUM);
-            if ( MattColorDetector.confirmBlue(sensors.colorSensor) )
+            encoderDriveDistance(SPEED_APPROACH, 4.5,               TOUT_MEDIUM);
+            if ( MattColorDetector.confirmRed(sensors.colorSensor) )
             {
                 pushButton(SPEED_ARM, TOUT_ARM);
             }
         }
 
-        encoderDriveDistance(SPEED_DRIVE, 30.0,         TOUT_MEDIUM);
-        encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
+//      encoderTurnInPlace(SPEED_TURN, -4.0,                        TOUT_MEDIUM);
+        encoderDriveDistance(SPEED_FULL, -40.0,                     TOUT_MEDIUM); // this passes the white line
+//      encoderTurnInPlace(SPEED_TURN, 4.0,                         TOUT_MEDIUM);
 
-        if ( MattColorDetector.confirmBlue(sensors.colorSensor) )
+        encoderDriveToWhiteLine(-SPEED_APPROACH, WHITE_THRESHOLD,   TOUT_LONG);
+        encoderDriveDistance(SPEED_APPROACH, 1.5,                   TOUT_MEDIUM);
+        if ( MattColorDetector.confirmRed(sensors.colorSensor) )
         {
-            encoderDriveDistance(SPEED_APPROACH, 1.5,   TOUT_MEDIUM);
-            if ( MattColorDetector.confirmBlue(sensors.colorSensor) )
-            {
-                pushButton(SPEED_ARM, TOUT_ARM);
-            }
+            pushButton(SPEED_ARM, TOUT_ARM);
         }
         else
         {
-            encoderDriveDistance(SPEED_APPROACH, 6.0,   TOUT_MEDIUM);
-            if ( MattColorDetector.confirmBlue(sensors.colorSensor) )
+            encoderDriveDistance(SPEED_APPROACH, 4.5,               TOUT_MEDIUM);
+            if ( MattColorDetector.confirmRed(sensors.colorSensor) )
             {
                 pushButton(SPEED_ARM, TOUT_ARM);
             }
@@ -146,4 +143,6 @@ public class PushBotAutoBlue extends PushBotAutomation {
 
         telemetry.addData("Path", "Complete"); telemetry.update();
     }
+
+
 }

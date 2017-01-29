@@ -68,10 +68,10 @@ public class ConceptRegisterOpModes
 
     manager.register("Teleoperation" ,        TelopDrive.class);
     manager.register("Autonomous Blue" ,      PushBotAutoBlue.class);
-    manager.register("Autonomous Blue w Gyro" ,      PushBotAutoBlueGyro.class);
+    manager.register("Autonomous Blue w Gyro",PushBotAutoBlueGyro.class);
     manager.register("Autonomous Ball" ,      PushBotAutoBall.class);
     manager.register("Autonomous Red" ,       PushBotAutoRed.class);
-    manager.register("Autonomous Red w Gyro" ,       PushBotAutoRedGyro.class);
+    manager.register("Autonomous Red w Gyro", PushBotAutoRedGyro.class);
 //    manager.register("Autonomous Test" ,    PushBotAutoTest.class);
   }
 }
