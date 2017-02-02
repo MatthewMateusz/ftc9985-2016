@@ -144,6 +144,12 @@ public class PushBotAutoBlue extends PushBotAutomation {
             }
         }
 
+        encoderTurnInPlace(SPEED_TURN, 10.0, TOUT_SHORT);
+        encoderDriveDistance(SPEED_DRIVE, -30.0,        TOUT_MEDIUM);
+        encoderDriveToWhiteLine(-SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
+        encoderDriveDistance(SPEED_APPROACH, -19.0,     TOUT_MEDIUM);
+
+
         telemetry.addData("Path", "Complete"); telemetry.update();
     }
 }
