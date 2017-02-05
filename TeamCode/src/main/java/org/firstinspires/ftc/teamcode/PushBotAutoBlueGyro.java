@@ -103,7 +103,7 @@ public class PushBotAutoBlueGyro extends PushBotAutomation {
         encoderTurnInPlace(SPEED_TURN, TURN_RIGHT/2.0, TOUT_MEDIUM);
         encoderDriveToBumper(SPEED_APPROACH, TOUT_LONG);
 
-        encoderTurnInPlace(SPEED_TURN, TURN_LEFT + gyroHeadingCorrection(-90.0), TOUT_MEDIUM);
+        encoderTurnInPlace(SPEED_TURN, TURN_LEFT + gyroHeadingCorrection(+90.0), TOUT_MEDIUM);
 
         encoderDriveToWhiteLine(SPEED_APPROACH, WHITE_THRESHOLD, TOUT_LONG);
 
