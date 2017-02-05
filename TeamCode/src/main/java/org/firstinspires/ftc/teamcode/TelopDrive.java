@@ -61,7 +61,7 @@ public class TelopDrive extends OpMode{
     // use the class above that was created to define a Pushbot's hardware
 //  private double              clawOffset      = 0.0 ;                     // Servo mid position
 
-//  private staticfinal double  CLAW_SPEED      = 0.02 ;                    // sets rate to move servo
+    //  private staticfinal double  CLAW_SPEED      = 0.02 ;                    // sets rate to move servo
     private static final double ARM_UP_POWER    =  0.8 ;                   //
     private static final double ARM_DOWN_POWER  = -0.8 ;
 
@@ -112,7 +112,7 @@ public class TelopDrive extends OpMode{
         }
 
         // crash avoidane system, override it by presssong B
-        if ( (left>0.0) && (right>0.0) && (sensors.touchSensorFront.isPressed()) && !gamepad1.b ) {
+        if ( (left>0.0) && (right>0.0) && sensors.touchSensorFront.isPressed() && !gamepad1.b ) {
             left = 0.0;
             right = 0.0;
         }
@@ -134,9 +134,8 @@ public class TelopDrive extends OpMode{
 
         // Limit arm movement at end postions or when pushed enough
         if (  ( (middle<0) &&
-                ( (sensors.touchSensorArmPush.isPressed()== true) ||
-                        (sensors.touchSensorArmOut.isPressed() == true)))
-            ||( (middle>0) && (sensors.touchSensorArmIn.isPressed()== true) ) ) {
+                ( sensors.touchSensorArmPush.isPressed() ||sensors.touchSensorArmOut.isPressed()))
+                ||( (middle>0) && sensors.touchSensorArmIn.isPressed() ) ) {
             middle=0;
         }
 
