@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
 /**
- * Created by olekmali on 1/4/2017.
+ * Decide whether the detected color is more RED or more BLUE
+ * in the challenging lighting conditions of the competition
  */
 
 public class MattColorDetector {

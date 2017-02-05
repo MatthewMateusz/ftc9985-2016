@@ -36,7 +36,6 @@ import android.app.Activity;
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
