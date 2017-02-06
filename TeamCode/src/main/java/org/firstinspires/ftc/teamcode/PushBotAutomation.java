@@ -309,8 +309,9 @@ abstract public class PushBotAutomation extends LinearOpMode {
         if (sensors.gyroSensor != null) {
             try {
                 // calculate error in -179 to +180 range  (
-                robotError = -sensors.gyroSensor.getIntegratedZValue() - targetAngle;
+                robotError = targetAngle + sensors.gyroSensor.getIntegratedZValue();
                 // Note: gyro is negated because left shoild be <0 and right should be >0
+                // Note: this is correction and not error so we use (desired - actual)
                 while (robotError > 180) robotError -= 360;
                 while (robotError <= -180) robotError += 360;
             } catch (Exception e) {
